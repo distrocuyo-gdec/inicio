@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GdC · Acceso administración</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{--bg1:#05120b;--bg2:#12321c;--bg3:#0b1f14;--card:rgba(255,255,255,.08);--stroke:rgba(255,255,255,.14);--text:#ebf5e9;--muted:rgba(235,245,233,.72);--accent:#8fd18a;--accent2:#b6f0a8;--shadow:0 22px 70px rgba(0,0,0,.35);--radius:28px}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:radial-gradient(1200px 800px at 10% 15%, rgba(143,209,138,.12), transparent 55%),radial-gradient(900px 680px at 88% 28%, rgba(182,240,168,.08), transparent 52%),linear-gradient(145deg, var(--bg1), var(--bg2) 48%, var(--bg3));display:grid;place-items:center;padding:24px}
+.card{width:min(560px,100%);background:rgba(255,255,255,.08);border:1px solid var(--stroke);box-shadow:var(--shadow);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:var(--radius);padding:28px}
+.kicker{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px}.title{font-size:38px;line-height:1.02;letter-spacing:-.04em;font-weight:900;margin:0 0 10px}.desc{margin:0 0 20px;color:var(--muted);font-size:15px;line-height:1.5}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);margin:14px 0 7px}
+input{width:100%;padding:14px 15px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.22);color:var(--text);outline:none;font-size:16px}input:focus{border-color:rgba(182,240,168,.6);box-shadow:0 0 0 4px rgba(182,240,168,.12)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}.btn{border:none;border-radius:16px;padding:13px 18px;cursor:pointer;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#04130c;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.btn.secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.12)}
+.msg{margin-top:14px;min-height:20px;color:#ffd3d3;font-size:14px}.hint{margin-top:16px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="kicker">Administración</div>
+    <h1 class="title">Acceso al panel</h1>
+    <p class="desc">Ingresá con las credenciales de administración para acceder al backend.</p>
+    <form id="loginForm" novalidate>
+      <label for="adminUser">Usuario</label>
+      <input id="adminUser" name="adminUser" type="text" autocomplete="username" required>
+      <label for="adminPass">Contraseña</label>
+      <input id="adminPass" name="adminPass" type="password" autocomplete="current-password" required>
+      <div class="actions">
+        <button class="btn" type="submit">Ingresar</button>
+        <a class="btn secondary" href="index.html">Volver al inicio</a>
+      </div>
+      <div class="msg" id="loginMsg"></div>
+    </form>
+  </main>
+<script>
+const ADMIN_USER='admin-distro';
+const ADMIN_PASS='G2026+';
+const STORAGE_KEY='gdc_admin_auth_v1';
+if(sessionStorage.getItem(STORAGE_KEY)==='1'){ window.location.replace('admin.html'); }
+document.getElementById('loginForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  const user=(document.getElementById('adminUser').value||'').trim();
+  const pass=document.getElementById('adminPass').value||'';
+  const msg=document.getElementById('loginMsg');
+  if(user===ADMIN_USER && pass===ADMIN_PASS){
+    sessionStorage.setItem(STORAGE_KEY,'1');
+    window.location.replace('admin.html');
+    return;
+  }
+  msg.textContent='Usuario o contraseña incorrectos.';
+});
+</script>
+</body>
+</html>

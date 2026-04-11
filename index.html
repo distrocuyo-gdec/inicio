@@ -1,0 +1,4219 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GdC · Norte Estratégico</title>
+<style>
+:root{
+  --gdc-deep:#12321c;
+  --gdc-dark:#06170e;
+  --cta1:#8fd18a;
+  --cta2:#b6f0a8;
+  --text:#eaf5e7;
+  --muted:rgba(234,245,231,.78);
+
+  --card:rgba(255,255,255,.085);
+  --stroke:rgba(255,255,255,.16);
+  --shadow:0 22px 70px rgba(0,0,0,.45);
+  --radius:28px;
+  --focus:rgba(169,195,166,.30);
+
+  --tile:rgba(255,255,255,.06);
+  --tileStroke:rgba(255,255,255,.13);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  overflow-x:hidden;
+  overflow-y:auto;
+  padding:24px 16px;
+  background:
+    radial-gradient(1100px 750px at 15% 20%, rgba(143,209,138,.18), transparent 62%),
+    radial-gradient(950px 700px at 85% 70%, rgba(169,195,166,.18), transparent 58%),
+    linear-gradient(135deg, var(--gdc-dark), var(--gdc-deep) 45%, #04130c);
+  color:var(--text);
+}
+
+.bg-sheen{
+  position:fixed; inset:-35%;
+  background:
+    radial-gradient(900px 650px at 30% 25%, rgba(182,240,168,.10), transparent 60%),
+    radial-gradient(800px 600px at 75% 70%, rgba(143,209,138,.08), transparent 58%),
+    conic-gradient(from 220deg at 50% 50%,
+      rgba(18,50,28,.42),
+      rgba(95,143,100,.14),
+      rgba(169,195,166,.10),
+      rgba(47,93,58,.18),
+      rgba(18,50,28,.42)
+    );
+  filter: blur(34px) saturate(1.06);
+  opacity:.55;
+  animation: drift 16s ease-in-out infinite alternate;
+  transform: translate3d(0,0,0);
+  z-index:-2;
+}
+@keyframes drift{
+  0%{transform:translate(-3%,-2%) rotate(-1deg) scale(1.02)}
+  100%{transform:translate(3%,2%) rotate(1deg) scale(1.05)}
+}
+@media (prefers-reduced-motion: reduce){ .bg-sheen{animation:none} }
+
+.card{
+  width:min(500px,92vw);
+  max-height:calc(100vh - 48px);
+  border-radius:var(--radius);
+  background:var(--card);
+  border:1px solid var(--stroke);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(26px);
+  -webkit-backdrop-filter:blur(26px);
+  padding:38px 28px 28px;
+  text-align:center;
+  position:relative;
+  overflow:auto;
+}
+
+/* Variant widths */
+.card.mapMode{
+  width:min(900px, 94vw);
+  padding:28px 30px 20px;
+  overflow:hidden;
+}
+@media (max-width: 560px){
+  body{ padding:12px 8px; }
+  .card{
+    width:96vw;
+    max-height:calc(100vh - 24px);
+    padding:24px 18px 18px;
+  }
+  .card.mapMode{
+    width:96vw;
+    padding:22px 18px 16px;
+  }
+}
+
+
+.brand img{
+  width:min(210px,62vw);
+  margin-bottom:16px;
+  filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));
+}
+
+h2{
+  font-size:20px;
+  margin:0 0 10px;
+  letter-spacing:-.01em;
+}
+
+#screen-login h2{
+  text-align:left;
+}
+p{
+  font-size:14px;
+  line-height:1.45;
+  color:var(--muted);
+  margin:0 0 18px;
+}
+
+label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.10em;
+  display:block;
+  margin:0 0 6px;
+}
+
+input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(0,0,0,.26);
+  color:var(--text);
+  margin:0 0 14px;
+  outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+input:focus{
+  border-color: rgba(182,240,168,.75);
+  box-shadow:0 0 0 5px var(--focus);
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:18px;
+  font-weight:900;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+  color:#04130c;
+  transition:transform .18s ease, box-shadow .2s ease, filter .2s ease;
+  position:relative;
+  overflow:hidden;
+}
+button:hover{
+  transform:translateY(-2px);
+  filter:saturate(1.06) brightness(1.02);
+  box-shadow:0 20px 60px rgba(182,240,168,.35);
+}
+button::after{
+  content:"";
+  position:absolute;
+  inset:-80%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.35), transparent 70%);
+  transform: translate(-36%, -18%) rotate(12deg);
+  opacity:0;
+  transition:opacity .25s ease;
+  pointer-events:none;
+}
+button:hover::after{opacity:.55}
+
+.footer{
+  margin-top:22px;
+  font-size:12px;
+  opacity:.7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+.footer img{
+  height:32px;
+  width:auto;
+}
+
+.screen{
+  display:none;
+  animation: screenIn .38s ease both;
+}
+.screen.active{ display:block; }
+@keyframes screenIn{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* Map */
+.mapHead{
+  text-align:left;
+  margin: 2px 0 14px;
+}
+.mapHead .kicker{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color: rgba(234,245,231,.75);
+  margin-bottom:6px;
+}
+.mapHead h3{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.01em;
+}
+.mapGrid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr)); /* siempre 3x3 */
+  gap:16px;
+  margin-top:16px;
+}
+
+/* En pantallas chicas mantenemos 3 columnas, ajustando tamaño tipográfico y espacio */
+@media (max-width: 560px){
+  .mapGrid{ gap:10px; }
+}
+
+.tile{
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.14);
+  padding:16px 16px 14px;
+  cursor:pointer;
+  transition: transform .16s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease, filter .22s ease;
+  min-height:120px;
+  position:relative;
+  overflow:hidden;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile::before{
+  content:"";
+  position:absolute;
+  inset:-80%;
+  background: radial-gradient(closest-side, rgba(182,240,168,.22), transparent 70%);
+  transform: translate(-30%, -18%) rotate(12deg);
+  opacity:.0;
+  transition: opacity .25s ease;
+  pointer-events:none;
+}
+
+.tile::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(600px 220px at 30% 10%, rgba(255,255,255,.10), transparent 55%);
+  opacity:.55;
+  pointer-events:none;
+}
+
+.tile:hover{
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 54px rgba(0,0,0,.30);
+  border-color: rgba(182,240,168,.42);
+  filter: saturate(1.05) brightness(1.02);
+}
+
+.tile:hover::before{ opacity:1; }
+
+.tile:active{
+  transform: translateY(-1px) scale(.995);
+}
+
+.num{
+  font-weight:950;
+  font-size:12px;
+  letter-spacing:.14em;
+  opacity:.86;
+  color: rgba(234,245,231,.85);
+}
+.tile h4{
+  margin:10px 0 0;
+  font-size:15px;
+  line-height:1.15;
+  letter-spacing:-.01em;
+}
+@media (max-width: 560px){
+  .tile{ min-height:98px; padding:12px 12px 10px; border-radius:20px; }
+  .tile h4{ font-size:13px; }
+}
+
+.topRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.smallBtn{
+  width:auto;
+  padding:10px 12px;
+  border-radius:14px;
+  font-weight:800;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  color: rgba(234,245,231,.86);
+  cursor:pointer;
+  transition: transform .16s ease, background .2s ease, border-color .2s ease;
+}
+.smallBtn:hover{
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.10);
+  border-color: rgba(182,240,168,.28);
+}
+
+/* Gamification UI */
+.gamiRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:18px;
+  background: rgba(0,0,0,.12);
+  border:1px solid rgba(255,255,255,.10);
+}
+.gamiLeft{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex:1;
+}
+.badgeLevel{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:62px;
+  height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  font-weight:900;
+  letter-spacing:.06em;
+  color:#04130c;
+  background: linear-gradient(135deg, var(--cta1), var(--cta2));
+  overflow:hidden;
+  box-shadow: 0 14px 34px rgba(182,240,168,.18);
+}
+.badgeLevel .spark{
+  position:absolute;
+  inset:-60%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.40), transparent 70%);
+  transform: translate(-35%, -20%) rotate(10deg);
+  opacity:.35;
+  animation: spark 2.8s ease-in-out infinite;
+}
+@keyframes spark{
+  0%,100%{ opacity:.25; transform: translate(-35%, -20%) rotate(10deg); }
+  50%{ opacity:.45; transform: translate(-30%, -10%) rotate(14deg); }
+}
+.gamiTrack{
+  height:10px;
+  flex:1;
+  border-radius:999px;
+  background: rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+}
+.gamiFill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background: linear-gradient(90deg, var(--cta1), var(--cta2));
+  transition: width .35s ease;
+}
+.gamiDots{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:nowrap;
+}
+.gamiDots span{
+  width:10px; height:10px;
+  border-radius:999px;
+  background: rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.12);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.gamiDots span.on{
+  background: rgba(182,240,168,.85);
+  border-color: rgba(182,240,168,.45);
+  transform: scale(1.12);
+}
+@media (max-width: 560px){
+  .gamiRow{ padding:8px 10px; gap:10px; }
+  .gamiDots span{ width:8px; height:8px; }
+}
+
+
+/* === MAP LAYOUT (1-2-3) === */
+.mapLayout{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap:18px;
+  align-items:start;
+  margin-top:6px;
+  min-height:calc(100vh - 132px);
+}
+
+.mapSide{
+  text-align:left;
+  border-radius:22px;
+  background: rgba(0,0,0,.10);
+  border:1px solid rgba(255,255,255,.10);
+  padding:18px 18px 16px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height: 520px;
+  position:sticky;
+  top:0;
+  height:calc(100vh - 132px);
+  max-height:calc(100vh - 132px);
+}
+
+.brandSide img{
+  width: 100%;
+  max-width: 240px;
+  margin: 0;
+}
+
+.sideWelcome .kicker{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color: rgba(234,245,231,.75);
+  margin:14px 0 8px;
+}
+.sideWelcome h3{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.01em;
+}
+.sideWelcome p{
+  margin:10px 0 0;
+  font-size:14px;
+}
+
+.footerSide{
+  margin-top:16px;
+  justify-content:flex-start;
+  opacity:.65;
+}
+
+.mapMain{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  min-width:0;
+  max-height:calc(100vh - 132px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding-right:8px;
+}
+.mapMain::-webkit-scrollbar{ width:8px; }
+.mapMain::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.14);
+  border-radius:999px;
+}
+
+.mapTop{
+  display:flex;
+  justify-content:flex-end;
+}
+
+.gamiRowMain{
+  margin-top:0;
+}
+
+/* Make tiles square + larger, keep 3x3 */
+.mapGridMain{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap:16px;
+}
+
+.tile{
+  min-height: unset !important;
+  aspect-ratio: 1 / 1;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  padding:18px 18px 16px;
+}
+
+/* Stronger hover / gamification */
+.tile{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow: 0 10px 26px rgba(0,0,0,.18);
+}
+.tile::after{
+  background:
+    radial-gradient(700px 260px at 30% 8%, rgba(255,255,255,.14), transparent 55%);
+  opacity:.6;
+}
+.tile:hover{
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 26px 64px rgba(0,0,0,.34);
+  border-color: rgba(182,240,168,.55);
+}
+.tile:hover::before{ opacity:1; }
+.tile:hover::after{ opacity:.8; }
+
+/* Animated border glow on hover */
+.tile .ring{
+  position:absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events:none;
+  opacity:0;
+  background:
+    conic-gradient(from 180deg,
+      rgba(182,240,168,.0),
+      rgba(182,240,168,.55),
+      rgba(255,255,255,.16),
+      rgba(182,240,168,.45),
+      rgba(182,240,168,.0)
+    );
+  filter: blur(10px);
+  transition: opacity .25s ease;
+}
+.tile:hover .ring{ opacity:.9; }
+
+/* Give titles more presence */
+.tile h4{
+  font-size:16px;
+  line-height:1.12;
+}
+.num{
+  font-size:12px;
+}
+
+/* Mobile stacking: 1, 2, 3 top-down */
+@media (max-width: 960px){
+  .card.mapMode{
+    width:min(980px, 94vw);
+    overflow:auto;
+  }
+  .mapLayout{
+    grid-template-columns: 1fr;
+    min-height:unset;
+  }
+  .mapSide{
+    min-height: unset;
+    position:relative;
+    top:auto;
+    height:auto;
+    max-height:none;
+  }
+  .mapMain{
+    max-height:none;
+    overflow:visible;
+    padding-right:0;
+  }
+  .mapTop{
+    justify-content:flex-start;
+  }
+}
+@media (max-width: 560px){
+  .mapGridMain{ gap:10px; }
+  .tile{ padding:12px 12px 10px; border-radius:20px; }
+  .tile h4{ font-size:13px; }
+}
+
+
+
+
+
+/* === MAP BLOCKS === */
+.mapGridMain{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.mapBlock{
+  border-radius:18px;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow: 0 12px 30px rgba(0,0,0,.14);
+}
+
+.blockTitle{
+  font-size:13px;
+  line-height:1.2;
+  font-weight:800;
+  letter-spacing:-.01em;
+  margin:0 0 12px;
+  padding:12px 18px;
+  border-radius:16px;
+  border:1px solid rgba(145, 183, 255, .42);
+  background: linear-gradient(180deg, rgba(126, 165, 230, .18), rgba(126, 165, 230, .08));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 8px 24px rgba(20,42,71,.14);
+  color:#bfd7ff;
+  text-align:center;
+}
+
+.blockGrid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap:12px;
+}
+
+.block-1{
+  background: linear-gradient(180deg, rgba(72,155,127,.22), rgba(72,155,127,.10));
+}
+.block-2{
+  background: linear-gradient(180deg, rgba(126,160,76,.20), rgba(126,160,76,.08));
+}
+.block-3{
+  background: linear-gradient(180deg, rgba(142,190,142,.18), rgba(142,190,142,.08));
+}
+
+.block-1 .tile:hover{ border-color: rgba(111,223,181,.55); }
+.block-2 .tile:hover{ border-color: rgba(186,226,109,.50); }
+.block-3 .tile:hover{ border-color: rgba(182,240,168,.55); }
+
+.block-1 .ring{
+  background: conic-gradient(from 180deg,
+    rgba(111,223,181,0),
+    rgba(111,223,181,.55),
+    rgba(255,255,255,.16),
+    rgba(111,223,181,.42),
+    rgba(111,223,181,0)
+  );
+}
+.block-2 .ring{
+  background: conic-gradient(from 180deg,
+    rgba(186,226,109,0),
+    rgba(186,226,109,.50),
+    rgba(255,255,255,.16),
+    rgba(186,226,109,.38),
+    rgba(186,226,109,0)
+  );
+}
+
+.mapGridMain .tile{
+  aspect-ratio: 1 / .82;
+  min-height: 102px !important;
+  padding:16px 16px 14px;
+}
+.mapGridMain .tile h4{
+  font-size:15px;
+}
+.mapGridMain .num{
+  font-size:11px;
+}
+
+@media (max-width: 560px){
+  .mapGridMain{ gap:10px; }
+  .mapBlock{ padding:8px; border-radius:16px; }
+  .blockTitle{ font-size:12px; margin-bottom:8px; padding:10px 14px; border-radius:14px; }
+  .blockGrid{ gap:8px; }
+  .mapGridMain .tile{
+    aspect-ratio: auto;
+    min-height: 90px !important;
+    padding:12px 10px 10px;
+    border-radius:18px;
+  }
+  .mapGridMain .tile h4{ font-size:12px; }
+}
+
+/* === MODAL === */
+body.modalOpen main.card{
+  filter: blur(10px) saturate(.92);
+  transform: scale(.995);
+}
+body.modalOpen main.card{ pointer-events:none; }
+
+.modalOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.52);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .22s ease;
+  z-index:9999;
+}
+.modalOverlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modalCard{
+  width:min(560px, 92vw);
+  background:rgba(18,50,28,.95);
+  border-radius:24px;
+  padding:22px 22px 20px;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 30px 80px rgba(0,0,0,.55);
+  animation: modalIn .28s ease both;
+  max-height: 86vh;
+  display:flex;
+  flex-direction:column;
+}
+@keyframes modalIn{
+  from{ transform:translateY(18px); opacity:0; }
+  to{ transform:translateY(0); opacity:1; }
+}
+
+.modalHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+.modalHeader h3{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.01em;
+}
+.modalClose{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  color:rgba(234,245,231,.85);
+  width:38px; height:38px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.modalClose:hover{
+  transform: translateY(-1px);
+  border-color: rgba(182,240,168,.35);
+  background: rgba(182,240,168,.10);
+}
+
+.modalBody{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  overflow:auto;
+  padding-bottom: 18px;
+}
+
+.modalLabel{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  margin-bottom:10px;
+  opacity:.7;
+}
+
+.modalHint{
+  margin:-4px 0 10px;
+  font-size:13px;
+  line-height:1.35;
+  color: rgba(234,245,231,.75);
+}
+
+.choices{
+  display:grid;
+  gap:10px;
+}
+.choice{
+  background:rgba(255,255,255,.05);
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  cursor:pointer;
+  transition:.2s ease;
+}
+.choice:hover{
+  background:rgba(182,240,168,.12);
+  border-color:rgba(182,240,168,.4);
+}
+
+.choice input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+/* Hidden section (only when "Otro") */
+.abiertaWrap{
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  transition: max-height .22s ease, opacity .22s ease;
+}
+.abiertaWrap.show{ max-height: 900px; opacity:1; }
+
+textarea maxlength="5000" style="min-height:180px; height:220px; resize:vertical; overflow-y:auto;"{
+  width:100%;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.22);
+  color:#eaf5e7;
+  outline:none;
+
+  /* consistent typography */
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+
+  padding: 14px 14px;
+  min-height: 220px;
+  resize: vertical;
+}
+textarea::placeholder{
+  color: rgba(234,245,231,.55);
+}
+textarea:focus{
+  border-color: rgba(182,240,168,.70);
+  box-shadow:0 0 0 4px rgba(169,195,166,.22);
+}
+@media (max-width: 560px){
+  textarea{ min-height: 260px; font-size:16px; }
+}
+
+
+@media (max-width:560px){
+  .modalCard{ padding:18px 16px 16px; }
+}
+
+
+}
+
+
+/* === MODAL (gamification upgrade) === */
+.modalCard{
+  background:
+    radial-gradient(900px 340px at 20% 0%, rgba(182,240,168,.10), transparent 55%),
+    rgba(18,50,28,.95);
+}
+
+.modalHUD{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  margin-bottom:14px;
+}
+.hudBadge{
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.85;
+}
+.hudText{
+  margin-top:6px;
+  font-size:14px;
+  color: rgba(234,245,231,.78);
+}
+.hudPill{
+  font-size:12px;
+  font-weight:800;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(0,0,0,.22);
+  color: rgba(234,245,231,.78);
+  white-space:nowrap;
+}
+.hudPill.ok{
+  border-color: rgba(182,240,168,.45);
+  background: rgba(182,240,168,.12);
+  color: rgba(234,245,231,.92);
+}
+
+/* Scroll behavior */
+.modalBody{
+  scroll-behavior:smooth;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right:6px;
+}
+/* subtle scrollbar */
+.modalBody::-webkit-scrollbar{ width:8px; }
+.modalBody::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.12);
+  border-radius:999px;
+}
+.modalBody::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.18); }
+
+.scrollHint{
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 10px;
+  margin: -4px 0 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.12);
+  color: rgba(234,245,231,.58);
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: .22s ease;
+}
+.scrollHint.show{ opacity:1; transform: translateY(0); }
+
+/* Choices become "level cards" */
+.choice{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 14px;
+  position:relative;
+  overflow:hidden;
+  border-radius:18px;
+}
+.choice::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  background: radial-gradient(600px 240px at 20% 10%, rgba(255,255,255,.10), transparent 60%);
+  opacity:.55;
+  pointer-events:none;
+}
+.choice input{
+  transform: scale(1.05);
+  accent-color: rgba(182,240,168,.95);
+}
+.choice:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 16px 46px rgba(0,0,0,.28);
+}
+.choice.selected{
+  border-color: rgba(182,240,168,.70);
+  background: rgba(182,240,168,.12);
+  box-shadow: 0 0 0 3px rgba(182,240,168,.14), 0 16px 46px rgba(0,0,0,.22);
+}
+
+/* Reveal section animation (only for Otro) */
+.abiertaWrap{
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding-top: 14px;
+  margin-top: 10px;
+}
+.abiertaWrap .modalLabel{ font-weight:900; }
+.abiertaWrap .modalHint{ color: rgba(234,245,231,.70); }
+.abiertaWrap.show{
+  animation: popIn .26s ease both;
+}
+@keyframes popIn{
+  from{ opacity:0; transform: translateY(10px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+
+/* Sticky save as "action bar" */
+.modalSave{
+  border-radius:18px;
+  font-size:15px;
+}
+
+
+/* Modal layout fix (no cut button) */
+.modalCard{
+  max-height: 88vh;
+  display:flex;
+  flex-direction:column;
+}
+.modalBody{
+  flex:1;
+  overflow:auto;
+  padding-right:6px;
+}
+.modalFooter{
+  padding-top:12px;
+  background: linear-gradient(to top, rgba(18,50,28,.98), rgba(18,50,28,.72));
+  border-top: 1px solid rgba(255,255,255,.10);
+  margin-top: 10px;
+}
+.modalSave{
+  width:100%;
+  padding:14px 18px;
+  border-radius:18px;
+  border:none;
+  font-weight:900;
+  font-size:15px;
+  background:linear-gradient(135deg, var(--cta1), var(--cta2));
+  color:#04130c;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.modalSave:hover{
+  transform: translateY(-1px);
+  box-shadow:0 18px 44px rgba(182,240,168,.26);
+}
+
+
+.modalHeader{ margin-bottom:12px; }
+.modalHUD{ margin-bottom:12px; }
+.choices{ gap:12px; }
+.choice{ padding:16px; }
+.choice:hover{ transform: translateY(-1px); }
+
+
+/* Choice text sizing and layout */
+.choice{
+  justify-content: space-between;
+}
+.choice{
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+@media (max-width: 560px){
+  .modalCard{ width: min(620px, 94vw); }
+  .choice{ font-size: 15px; padding: 18px 16px; }
+  .modalHeader h3{ font-size: 18px; }
+  .hudText{ font-size: 15px; }
+}
+
+
+.choice.saved{
+  border-color: rgba(182,240,168,.85);
+  box-shadow: 0 0 0 4px rgba(182,240,168,.18), 0 16px 46px rgba(0,0,0,.22);
+}
+
+
+/* === PANTALLA ESTILO PREGUNTAS === */
+.card.questionMode{
+  width:min(1120px,94vw);
+  padding:24px 26px 18px;
+}
+.questionLayout{
+  display:grid;
+  grid-template-columns: 260px minmax(0,1fr);
+  gap:18px;
+  align-items:stretch;
+}
+.questionSide{
+  text-align:left;
+  border-radius:22px;
+  background: rgba(0,0,0,.10);
+  border:1px solid rgba(255,255,255,.10);
+  padding:16px 16px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height: 0;
+}
+.questionSide .brand{
+  display:flex;
+  justify-content:flex-start;
+  align-items:flex-start;
+  padding:6px 0 0;
+}
+.questionSide .brand img{
+  width:min(190px,100%);
+  margin-bottom:0;
+}
+.questionSide .footer img{
+  width:110px;
+}
+.questionMain{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-width:0;
+}
+.questionTop{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:14px;
+}
+.questionBlockTag{
+  justify-self:stretch;
+  min-height:38px;
+  padding:8px 18px;
+  border-radius:14px;
+  border:1.5px solid rgba(149,190,255,.55);
+  box-shadow:0 0 0 1px rgba(149,190,255,.12) inset;
+  background:linear-gradient(180deg,rgba(121,170,255,.12),rgba(121,170,255,.05));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#b8ccff;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:none;
+}
+.questionCounter{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  color:rgba(234,245,231,.78);
+}
+.questionCounter strong{
+  font-size:13px;
+}
+.questionCounter .miniTrack{
+  width:96px;
+  height:7px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  overflow:hidden;
+  position:relative;
+}
+.questionCounter .miniFill{
+  width:11.11%;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+}
+.questionPanel{
+  border-radius:22px;
+  background:rgba(0,0,0,.10);
+  border:1px solid rgba(255,255,255,.10);
+  min-height: 0;
+  max-height: 72vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.questionPanelInner{
+  padding:20px 20px 16px;
+  overflow-y:auto;
+  max-height:100%;
+  padding-right:6px;
+}
+.questionPanel h3{
+  margin:0 0 16px;
+  font-size:19px;
+  letter-spacing:-.02em;
+}
+.q1Choices{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:18px;
+}
+.q1Choice{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+  cursor:pointer;
+  user-select:none;
+  text-transform:none;
+  letter-spacing:0;
+}
+.q1Choice span:last-child{
+  text-transform:none;
+  letter-spacing:0;
+  font-weight:800;
+}
+.q1Choice input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.q1Box{
+  width:22px;
+  height:22px;
+  border-radius:7px;
+  border:1.5px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.04);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s ease;
+  flex-shrink:0;
+}
+.q1Box::after{
+  content:"✓";
+  color:#04130c;
+  font-size:13px;
+  font-weight:900;
+  opacity:0;
+  transform:scale(.6);
+  transition:all .2s ease;
+}
+.q1Choice input:checked + .q1Box{
+  background:rgba(5,10,28,.95);
+  border-color:rgba(5,10,28,.95);
+}
+.q1Choice input:checked + .q1Box::after{
+  color:#fff;
+  opacity:1;
+  transform:scale(1);
+}
+.q1Write{
+  border-left:3px solid rgba(234,245,231,.18);
+  padding-left:14px;
+}
+.q1Prompt{
+  margin:0 0 12px;
+  color:var(--text);
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  line-height:1.35;
+}
+.q1Textarea{
+  width:100%;
+  min-height:116px;
+  max-height:116px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.20);
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+  padding:14px 16px;
+  font: inherit;
+  font-size:13px;
+  line-height:1.4;
+  resize:none;
+  outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+.q1Textarea::placeholder{ color:rgba(234,245,231,.46); }
+.q1Textarea:focus{
+  border-color: rgba(182,240,168,.75);
+  box-shadow:0 0 0 4px var(--focus);
+}
+.q1Textarea:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.q1Bottom{
+  padding:14px 20px 14px;
+  border-top:1px solid rgba(255,255,255,.10);
+  display:flex;
+  justify-content:flex-end;
+}
+.q1Bottom .smallBtn{
+  min-width:150px;
+}
+@media (max-width: 960px){
+  .card.questionMode{
+    width:94vw;
+    padding:20px 16px 14px;
+  }
+  .questionLayout{
+    grid-template-columns: 1fr;
+    gap:14px;
+  }
+  .questionSide{
+    min-height:unset;
+    padding:14px;
+    gap:18px;
+  }
+  .questionSide .brand{
+    display:flex;
+    justify-content:center;
+  }
+  .questionSide .brand img{
+    width:min(150px,50vw);
+  }
+  .questionTop{
+    flex-wrap:wrap;
+    justify-content:space-between;
+  }
+}
+@media (max-width:560px){
+  .questionPanelInner{ padding:16px 14px; }
+  .questionPanel h3{ font-size:17px; }
+  .q1Choice{ font-size:13px; gap:10px; }
+  .q1Prompt, .q1Textarea{ font-size:12px; }
+  .q1Textarea{ min-height:104px; max-height:104px; }
+  .q1Bottom{ padding:12px 14px; }
+  .q1Bottom .smallBtn{ min-width:132px; }
+}
+
+.questionPanelInner::-webkit-scrollbar{
+  width:6px;
+}
+.questionPanelInner::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.15);
+  border-radius:999px;
+}
+
+
+/* === Ajustes de altura y scroll interno para preguntas 1 a 9 === */
+.card.questionMode{
+  height:min(760px, calc(100vh - 32px));
+  max-height:calc(100vh - 32px);
+  display:flex;
+  flex-direction:column;
+}
+.screen.active[id^="screen-pregunta-"]{
+  display:block;
+  height:100%;
+}
+.screen.active[id^="screen-pregunta-"] .questionLayout{
+  height:100%;
+}
+.screen.active[id^="screen-pregunta-"] .questionMain{
+  min-height:0;
+}
+.screen.active[id^="screen-pregunta-"] .questionPanel{
+  flex:1;
+  min-height:0;
+  max-height:none;
+}
+.screen.active[id^="screen-pregunta-"] .questionPanelInner{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+.qTextOnly{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.qTextOnly textarea{
+  width:100%;
+  min-height:170px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+  padding:16px 18px;
+  font:inherit;
+  font-size:14px;
+  line-height:1.4;
+  resize:none;
+  outline:none;
+}
+.qTextOnly textarea::placeholder{ color:rgba(234,245,231,.46); }
+.qTextOnly textarea:focus{
+  border-color: rgba(182,240,168,.75);
+  box-shadow:0 0 0 4px var(--focus);
+}
+.qHintOrange{
+  background:rgba(121,170,255,.10);
+  border:1px solid rgba(121,170,255,.18);
+}
+.qHintOrange .q3InfoText{ color:#D9E7FF; }
+.qInfoCircle{
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  border:3px solid #8FB4FF;
+  color:#8FB4FF;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:20px;
+  line-height:1;
+  flex-shrink:0;
+  margin-top:1px;
+  box-sizing:border-box;
+  filter:drop-shadow(0 2px 6px rgba(67,175,255,.18));
+}
+.qSubLabel{
+  margin:14px 0 8px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.35;
+  font-weight:700;
+}
+.qCompact textarea{ min-height:120px; }
+@media (max-width:560px){
+  .card.questionMode{ height:calc(100vh - 16px); max-height:calc(100vh - 16px); }
+  .qTextOnly textarea{ min-height:180px; font-size:13px; }
+  .qCompact textarea{ min-height:130px; }
+}
+
+
+
+/* === Modal motivacional de la pregunta 1 === */
+.q1FeedbackOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(4,12,8,.62);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index:12000;
+}
+.q1FeedbackOverlay.active{ display:flex; }
+.q1FeedbackModal{
+  width:min(460px, 92vw);
+  border-radius:22px;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(45,78,55,.98), rgba(24,46,32,.98));
+  border:1px solid rgba(234,245,231,.14);
+  box-shadow:0 24px 70px rgba(0,0,0,.35);
+  color:var(--text);
+}
+.q1FeedbackBody{ padding:26px 24px 18px; }
+.q1FeedbackBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(182,240,168,.10);
+  border:1px solid rgba(182,240,168,.18);
+  color:rgba(234,245,231,.92);
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:14px;
+}
+.q1FeedbackTitle{
+  margin:0 0 10px;
+  font-size:24px;
+  line-height:1.1;
+  letter-spacing:-.02em;
+}
+.q1FeedbackText{
+  margin:0;
+  color:rgba(234,245,231,.80);
+  font-size:14px;
+  line-height:1.45;
+}
+.q1FeedbackActions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding:16px 24px 22px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.q1FeedbackGhost,
+.q1FeedbackPrimary{
+  appearance:none;
+  border:none;
+  border-radius:14px;
+  height:42px;
+  padding:0 18px;
+  font:inherit;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+.q1FeedbackGhost{
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+}
+.q1FeedbackPrimary{
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+  color:#07170d;
+  font-weight:800;
+}
+@media (max-width:560px){
+  .q1FeedbackBody{ padding:22px 18px 16px; }
+  .q1FeedbackTitle{ font-size:21px; }
+  .q1FeedbackText{ font-size:13px; }
+  .q1FeedbackActions{
+    padding:14px 18px 18px;
+    flex-direction:column-reverse;
+  }
+  .q1FeedbackGhost, .q1FeedbackPrimary{ width:100%; }
+}
+
+
+/* ===== Pregunta 3 ===== */
+.q3InfoBox{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:14px 16px;
+  border-radius:14px;
+  background:rgba(121,170,255,.10);
+  border:1px solid rgba(121,170,255,.18);
+  margin-bottom:18px;
+}
+.q3InfoIconImg{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+  flex-shrink:0;
+  margin-top:1px;
+  filter:drop-shadow(0 2px 6px rgba(67,175,255,.18));
+}
+.qPromptSpecialIcon{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+  flex-shrink:0;
+  margin-top:1px;
+  filter:drop-shadow(0 2px 4px rgba(67,175,255,.16));
+}
+.q3InfoText{
+  color:#D9E7FF;
+  font-size:13px;
+  line-height:1.45;
+  font-weight:600;
+}
+.q3Blocks{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.q3BlockTitle{
+  margin:0 0 10px;
+  color:var(--text);
+  font-size:13px;
+  line-height:1.35;
+  font-weight:700;
+}
+.q3Textarea{
+  width:100%;
+  min-height:90px;
+  max-height:120px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.20);
+  background:rgba(255,255,255,.03);
+  color:var(--text);
+  padding:14px 16px;
+  font:inherit;
+  font-size:13px;
+  line-height:1.4;
+  resize:none;
+  outline:none;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+.q3Textarea::placeholder{
+  color:rgba(234,245,231,.46);
+}
+.q3Textarea:focus{
+  border-color: rgba(182,240,168,.75);
+  box-shadow:0 0 0 4px var(--focus);
+}
+@media (max-width:560px){
+  .q3InfoText, .q3BlockTitle, .q3Textarea{ font-size:12px; }
+  .q3Textarea{ min-height:94px; }
+}
+
+
+/* ===== Q3 modal bloque completado ===== */
+.q3FeedbackModal.q3Success{
+  width:min(580px, 94vw);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at top, rgba(182,240,168,.14), transparent 38%),
+    linear-gradient(180deg, rgba(45,78,55,.99), rgba(18,36,25,.99));
+  border:1px solid rgba(234,245,231,.18);
+  box-shadow:0 30px 90px rgba(0,0,0,.42);
+  animation:q3PopIn .30s ease-out;
+}
+.q3FeedbackModalHead{
+  display:flex;
+  justify-content:center;
+  padding:22px 24px 0;
+}
+.q3FeedbackModalHead img{
+  width:170px;
+  max-width:60%;
+  margin-bottom:6px;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
+  height:auto;
+  display:block;
+  opacity:.98;
+}
+.q3FeedbackBody.q3SuccessBody{
+  text-align:center;
+  padding:18px 32px 16px;
+}
+.q3SuccessCheck{
+  width:58px;
+  height:58px;
+  margin:0 auto 16px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg, var(--cta1), var(--cta2));
+  color:#0A1A10;
+  font-size:30px;
+  font-weight:900;
+  box-shadow:0 10px 26px rgba(182,240,168,.22);
+}
+.q3SuccessTitle{
+  margin:0 0 10px;
+  font-size:31px;
+  line-height:1.08;
+  letter-spacing:-.03em;
+  color:var(--text);
+}
+.q3SuccessText{
+  margin:0;
+  color:rgba(234,245,231,.84);
+  font-size:16px;
+  line-height:1.45;
+  font-weight:600;
+}
+.q3SuccessActions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  padding:18px 24px 26px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+@keyframes q3PopIn{
+  from{ transform:translateY(10px) scale(.96); opacity:0; }
+  to{ transform:translateY(0) scale(1); opacity:1; }
+}
+@media (max-width:560px){
+  .q3FeedbackModal.q3Success{ width:min(92vw, 92vw); border-radius:24px; }
+  .q3FeedbackBody.q3SuccessBody{ padding:16px 18px 10px; }
+  .q3SuccessTitle{ font-size:24px; }
+  .q3SuccessText{ font-size:14px; }
+  .q3SuccessActions{ padding:14px 18px 18px; flex-direction:column-reverse; }
+}
+
+
+/* === FINAL SCREEN === */
+
+#screen-final{
+  width:100%;
+}
+#screen-final .finalLayout{
+  width:100%;
+}
+.card.finalMode{
+  width:min(1120px,94vw);
+  padding:0;
+  background:transparent;
+  border:none;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  overflow:visible;
+}
+.finalLayout{
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr);
+  gap:18px;
+  align-items:stretch;
+}
+.finalSide{
+  text-align:left;
+  border-radius:22px;
+  background: rgba(0,0,0,.10);
+  border:1px solid rgba(255,255,255,.10);
+  padding:16px 16px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:0;
+}
+.finalSide .brand{
+  display:flex;
+  justify-content:flex-start;
+  align-items:flex-start;
+  padding:6px 0 0;
+}
+.finalSide .brand img{
+  width:min(190px,100%);
+  margin-bottom:0;
+}
+.finalSide .footer img{
+  width:110px;
+}
+.finalMain{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-width:0;
+}
+.finalTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+}
+.finalTopSimple{
+  justify-content:flex-start;
+}
+.finalCounter{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+  color:rgba(234,245,231,.78);
+}
+.finalCounter .miniTrack{
+  width:96px;
+  height:7px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  overflow:hidden;
+}
+.finalCounter .miniFill{
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+}
+.finalPanel{
+  border-radius:22px;
+  background:rgba(0,0,0,.10);
+  border:1px solid rgba(255,255,255,.10);
+  min-height:0;
+  max-height:72vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.finalPanelInner{
+  padding:28px 28px 24px;
+  overflow-y:auto;
+  max-height:100%;
+  padding-right:10px;
+  text-align:center;
+}
+.finalPanelInner::-webkit-scrollbar{ width:8px; }
+.finalPanelInner::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.14);
+  border-radius:999px;
+}
+.finalCheck{
+  width:108px;
+  height:108px;
+  margin:6px auto 22px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+  color:#04130c;
+  font-size:52px;
+  font-weight:900;
+  box-shadow:0 16px 42px rgba(182,240,168,.24);
+}
+.finalMainTitle{
+  font-size:34px;
+  line-height:1.08;
+  margin:0 0 14px;
+  font-weight:900;
+  letter-spacing:-.02em;
+}
+.finalLead{
+  font-size:18px;
+  line-height:1.45;
+  color:rgba(234,245,231,.84);
+  margin:0 0 24px;
+}
+.finalDownloadBtn{
+  width:min(420px,100%);
+  margin:0 auto 26px;
+}
+.finalNpsWrap{
+  width:min(760px,100%);
+  margin:0 auto 6px;
+  padding:20px 20px 18px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.finalNpsQuestion{
+  margin:0 0 16px;
+  font-size:20px;
+  line-height:1.25;
+  font-weight:900;
+  color:var(--text);
+}
+.finalNpsOptions{
+  display:flex !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  align-items:center;
+  justify-content:center;
+  gap:32px;
+}
+.finalNpsOption{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  flex:0 0 128px;
+  width:128px;
+  height:128px;
+  padding:0;
+  border-radius:28px;
+  background:transparent;
+  border:0;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:transform .18s ease, filter .18s ease;
+}
+.finalNpsOption:hover{
+  transform:translateY(-3px) scale(1.02);
+  filter:brightness(1.04);
+}
+.finalNpsOption.is-selected{
+  transform:translateY(-3px) scale(1.06);
+  filter:drop-shadow(0 0 0 rgba(0,0,0,0));
+}
+.finalNpsEmoji{
+  width:112px;
+  height:112px;
+  border-radius:32px;
+  display:block;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 10px 24px rgba(0,0,0,.18);
+  transition:transform .18s ease, box-shadow .18s ease, outline-color .18s ease, background-color .18s ease;
+}
+.finalNpsEmoji--good{ background-image:url('assets/nps-good.png'); }
+.finalNpsEmoji--neutral{ background-image:url('assets/nps-neutral.png'); }
+.finalNpsEmoji--bad{ background-image:url('assets/nps-bad.png'); }
+.finalNpsOption.is-selected .finalNpsEmoji{
+  background-color:rgba(191, 235, 170, .12);
+  box-shadow:0 0 0 2px rgba(213,255,186,.78), 0 0 0 10px rgba(170,214,255,.22), 0 20px 38px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.22);
+  outline:3px solid rgba(219,255,193,.95);
+  outline-offset:6px;
+  transform:scale(1.04);
+}
+.finalNpsLabel,.finalNpsValue{ display:none !important; }
+.npsFeedbackOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  background:rgba(3,11,8,.58);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  z-index:120;
+}
+.npsFeedbackOverlay.active{ display:flex; }
+.npsFeedbackModal{
+  width:min(560px, 94vw);
+  border-radius:28px;
+  background:radial-gradient(circle at top, rgba(182,240,168,.14), transparent 38%), linear-gradient(180deg, rgba(45,78,55,.99), rgba(18,36,25,.99));
+  border:1px solid rgba(234,245,231,.18);
+  box-shadow:0 30px 90px rgba(0,0,0,.42);
+  animation:q3PopIn .30s ease-out;
+  overflow:hidden;
+}
+.npsFeedbackBody{
+  padding:28px 28px 18px;
+  text-align:center;
+}
+.npsFeedbackCheck{
+  width:62px;
+  height:62px;
+  margin:0 auto 16px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+  color:#0A1A10;
+  font-size:32px;
+  font-weight:900;
+  box-shadow:0 10px 26px rgba(182,240,168,.22);
+}
+.npsFeedbackTitle{
+  margin:0 0 8px;
+  font-size:31px;
+  line-height:1.08;
+  letter-spacing:-.03em;
+  color:var(--text);
+}
+.npsFeedbackText{
+  margin:0;
+  color:rgba(234,245,231,.84);
+  font-size:16px;
+  line-height:1.48;
+  font-weight:600;
+}
+.npsFeedbackActions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  padding:18px 24px 26px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.npsFeedbackGhost,.npsFeedbackPrimary{
+  border:none;
+  border-radius:16px;
+  padding:13px 16px;
+  font-weight:900;
+  cursor:pointer;
+  transition:transform .18s ease, opacity .18s ease;
+}
+.npsFeedbackGhost{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  color:rgba(234,245,231,.9);
+}
+.npsFeedbackPrimary{
+  background:linear-gradient(135deg,var(--cta1),var(--cta2));
+  color:#04130c;
+}
+.npsFeedbackGhost:hover,.npsFeedbackPrimary:hover{ transform:translateY(-1px); }
+.finalDivider{
+  border:none;
+  border-top:1px solid rgba(255,255,255,.12);
+  margin:28px 0 24px;
+}
+.finalSectionTitle{
+  font-size:22px;
+  line-height:1.3;
+  font-weight:900;
+  text-align:left;
+  margin:0 0 18px;
+}
+.finalList{
+  text-align:left;
+  margin:0;
+  padding-left:0;
+  list-style:none;
+  color:rgba(234,245,231,.88);
+}
+.finalList li{
+  position:relative;
+  margin:0 0 16px;
+  padding-left:32px;
+  font-size:16px;
+  line-height:1.6;
+}
+.finalList li::before{
+  content:"✓";
+  position:absolute;
+  left:0;
+  top:.42em;
+  width:18px;
+  height:18px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(164,220,146,.14);
+  border:1px solid rgba(164,220,146,.34);
+  color:#a9df93;
+  font-weight:900;
+  font-size:12px;
+  line-height:1;
+  box-shadow:0 0 0 3px rgba(164,220,146,.05);
+}
+.finalList strong{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(151,186,255,.12);
+  border:1px solid rgba(151,186,255,.30);
+  color:#b9cbff;
+  font-weight:900;
+  margin-right:6px;
+}
+.finalThanks{
+  font-size:17px;
+  font-weight:800;
+  margin:0;
+  color:var(--text);
+}
+@media (max-width:960px){
+  .card.finalMode{ width:min(1120px,94vw); }
+  .finalLayout{ grid-template-columns:1fr; }
+}
+@media (max-width:700px){
+  .card.finalMode{ width:96vw; padding:0; }
+  .finalPanelInner{ padding:22px 18px 18px; }
+  .finalCheck{ width:86px; height:86px; font-size:40px; margin-bottom:18px; }
+  .finalMainTitle{ font-size:26px; }
+  .finalLead{ font-size:16px; }
+  .finalNpsWrap{ padding:18px 14px 14px; }
+  .finalNpsQuestion{ font-size:18px; }
+  .finalNpsOptions{ gap:18px; flex-wrap:nowrap !important; }
+  .finalNpsOption{ flex:0 0 104px; width:104px; height:104px; border-radius:24px; padding:0; }
+  .finalNpsEmoji{ width:94px; height:94px; border-radius:24px; }
+  .finalSectionTitle{ font-size:18px; }
+  .finalList li{ font-size:15px; }
+  .finalThanks{ font-size:15px; }
+  .npsFeedbackBody{ padding:22px 18px 12px; }
+  .npsFeedbackTitle{ font-size:24px; }
+  .npsFeedbackText{ font-size:14px; }
+  .npsFeedbackActions{ padding:14px 18px 18px; flex-direction:column-reverse; }
+  .finalNpsOptions{ gap:18px; flex-wrap:nowrap !important; }
+  .finalNpsOption{ flex:0 0 104px; width:104px; height:104px; border-radius:24px; }
+  .finalNpsEmoji{ width:94px; height:94px; border-radius:24px; }
+}
+
+
+/* Access */
+.accessActions{display:grid;gap:12px;margin-top:22px}
+.accessBtn{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:16px 18px;border-radius:20px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--text);font-weight:800}
+.accessBtn span{display:block}
+.accessBtn small{display:block;font-weight:500;color:var(--muted);margin-top:3px}
+.accessBtn.ghost{background:rgba(255,255,255,.03);color:rgba(234,245,231,.84)}
+.accessBtn.adminMini{width:min(260px,64%);justify-self:center;justify-content:center;min-height:44px;padding:10px 14px;border-radius:16px;background:rgba(255,255,255,.03);font-size:13px;font-weight:700}
+.accessBtn.adminMini span{flex:none;text-align:center}
+.accessBtn.adminMini .arrow{display:none}
+.accessBtn .arrow{font-size:18px;color:rgba(182,240,168,.95)}
+.accessPanel{display:none;margin-top:18px;padding:18px;border-radius:20px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.18);text-align:left}
+.accessPanel.active{display:block}
+.accessPanel h3{margin:0 0 8px;font-size:18px}
+.accessPanel p{margin:0 0 14px}
+.accessRow{display:flex;gap:10px;align-items:center}
+.accessRow button{display:flex;align-items:center;justify-content:center;text-align:center}
+.accessRow .smallBtnAlt{width:auto;min-width:146px;padding:12px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--text);font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap}
+#cancelAccessBtn,#cancelOpenAccessBtn{display:flex;align-items:center;justify-content:center;text-align:center}
+.accessList{display:grid;gap:10px;margin-top:14px}
+.accessProjectCard{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 14px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.04)}
+.accessProjectCardTitle{font-size:15px;font-weight:800}
+.accessProjectCardMeta{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4}
+.accessHint{font-size:13px;color:var(--muted);margin-top:10px}
+
+</style>
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+  <div class="bg-sheen" aria-hidden="true"></div>
+
+  <main class="card" role="application" aria-label="GdC">
+    <section class="screen active" id="screen-login" aria-label="Ingreso">
+      <div class="brand">
+        <img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico">
+      </div>
+
+      <h2>Antes de lanzar tu cambio, diseñemos su recorrido.</h2>
+      <p style="text-align: left;">
+        El éxito de un cambio no se mide por su anuncio, sino por su adopción.
+        <br>
+        Este espacio te acompaña a ordenar tu iniciativa para que tenga impacto real, liderazgo visible y resultados sostenibles.
+        <br>
+        No es una evaluación. Es una herramienta para potenciar tu cambio.
+      </p>
+
+      <div class="accessActions">
+        <button type="button" class="accessBtn" id="showNewProjectBtn">
+          <span>
+            Nuevo proyecto
+            <small>Iniciá tu mapa del cambio.</small>
+          </span>
+          <span class="arrow">→</span>
+        </button>
+
+        <button type="button" class="accessBtn" id="showOpenProjectBtn">
+          <span>
+            Abrir proyectos
+            <small>Accedé a tu base de proyectos guardados.</small>
+          </span>
+          <span class="arrow">→</span>
+        </button>
+
+        <button type="button" class="accessBtn ghost adminMini" id="showBackendBtn">
+          <span>Panel administrador</span>
+        </button>
+      </div>
+
+      <section class="accessPanel" id="newProjectPanel" aria-label="Nuevo proyecto">
+        <h3>Nuevo proyecto</h3>
+        <p>Ingresá con tus datos y mail corporativo para iniciar el recorrido.</p>
+        <form id="newProjectForm" novalidate>
+          <label for="name">Nombre</label>
+          <input id="name" name="name" type="text" placeholder="Tu nombre" autocomplete="name" required>
+
+          <label for="email">Mail</label>
+          <input id="email" name="email" type="email" placeholder="tunombre@mail.com" autocomplete="email" required>
+
+          <label for="projectName">Nombre del proyecto</label>
+          <input id="projectName" name="projectName" type="text" placeholder="Ej: Implementación de nuevo sistema" required>
+
+          <div class="accessRow">
+            <button type="button" id="startBtn">Comenzar</button>
+            <button type="button" class="smallBtnAlt" id="cancelAccessBtn">Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="accessPanel" id="openProjectPanel" aria-label="Abrir proyectos">
+        <h3>Abrir proyectos</h3>
+        <form id="openProjectForm" novalidate>
+          <label for="openEmail">Mail</label>
+          <input id="openEmail" name="openEmail" type="email" placeholder="tunombre@mail.com" autocomplete="email" required>
+          <div class="accessRow">
+            <button type="submit" id="findProjectsBtn">Buscar proyectos</button>
+            <button type="button" class="smallBtnAlt" id="cancelOpenAccessBtn">Cancelar</button>
+          </div>
+        </form>
+        <div id="openProjectsHint" class="accessHint">Todavía no buscaste proyectos.</div>
+        <div id="openProjectsList" class="accessList"></div>
+      </section>
+
+      <div class="footer">
+        <span>Realizado por</span>
+        <img src="assets/distrocuyo.png" alt="Distrocuyo">
+      </div>
+    </section>
+
+    
+    <section class="screen" id="screen-mapa" aria-label="Mapa 9 puntos">
+      <div class="mapLayout">
+        <!-- 1) Sidebar -->
+        <aside class="mapSide" aria-label="Identidad y bienvenida">
+          <div class="brand brandSide">
+            <img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico">
+          </div>
+
+          <div class="sideWelcome">
+            
+            <h3>Mapa del Cambio</h3>
+            <p>
+              Todo cambio que conecta estrategia, personas, contexto y resultados desde una mirada sistémica, se diseña pensando estos 9 puntos clave.
+            </p>
+          </div>
+
+          <div class="footer footerSide">
+            <span>Realizado por</span>
+            <img src="assets/distrocuyo.png" alt="Distrocuyo">
+          </div>
+        </aside>
+
+        <!-- Main -->
+        <section class="mapMain" aria-label="Progreso y mapa">
+          <div class="mapTop">
+            <button class="smallBtn" id="backBtn" type="button">← Volver</button>
+          </div>
+
+          <!-- 2) Progreso -->
+          <div class="gamiRow gamiRowMain" aria-label="Progreso">
+            <div class="gamiLeft">
+              <div class="badgeLevel" title="Progreso de tu mapa">
+                <span class="spark"></span>
+                <span id="gamiText">0/9</span>
+              </div>
+              <div class="gamiTrack" aria-hidden="true">
+                <div class="gamiFill" id="gamiFill"></div>
+              </div>
+            </div>
+            <div class="gamiDots" id="gamiDots" aria-hidden="true"></div>
+          </div>
+
+          <!-- 3) Grid -->
+          <div class="mapGrid mapGridMain" id="mapGrid" aria-label="Nueve puntos"></div>
+</section>
+      </div>
+    </section>
+
+  
+  
+<section class="screen" id="screen-pregunta-1" aria-label="Pregunta 1">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide">
+        <img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico">
+      </div>
+      <div class="footer footerSide">
+        <span>Realizado por</span>
+        <img src="assets/distrocuyo.png" alt="Distrocuyo">
+      </div>
+    </aside>
+
+    <section class="questionMain" aria-label="Pregunta 1">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ1" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 1: Direccionalidad estratégica</div>
+        <div class="questionCounter" aria-label="Pregunta 1 de 9">
+          <strong>Pregunta 1 / 9</strong>
+          <div class="miniTrack" aria-hidden="true"><div class="miniFill"></div></div>
+        </div>
+      </div>
+
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>1. ¿Qué cambia?</h3>
+
+          <div class="q1Choices">
+            <label class="q1Choice">
+              <input type="checkbox" name="q1_tipo" value="Proceso">
+              <span class="q1Box"></span>
+              <span>Proceso</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q1_tipo" value="Sistema / herramienta">
+              <span class="q1Box"></span>
+              <span>Sistema / herramienta</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q1_tipo" value="Rol / estructura">
+              <span class="q1Box"></span>
+              <span>Rol / estructura</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q1_tipo" value="Práctica cultural">
+              <span class="q1Box"></span>
+              <span>Práctica cultural</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q1_tipo" value="Otro">
+              <span class="q1Box"></span>
+              <span>Otro</span>
+            </label>
+          </div>
+
+          <div class="q1Write">
+            <p class="q1Prompt"><img class="qPromptSpecialIcon" src="assets/q1-q2-hint-icon.png" alt="Guía"> Describí el cambio en una frase clara y comprensible para cualquier persona de la compañía.</p>
+            <textarea id="q1Text" class="q1Textarea" disabled placeholder="Ej: Vamos a implementar un nuevo sistema de gestión de proyectos..."></textarea>
+          </div>
+        </div>
+
+        <div class="q1Bottom">
+          <button class="smallBtn" id="q1Next" type="button">Siguiente</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+<section class="screen" id="screen-pregunta-2" aria-label="Pregunta 2">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide">
+        <img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico">
+      </div>
+      <div class="footer footerSide">
+        <span>Realizado por</span>
+        <img src="assets/distrocuyo.png" alt="Distrocuyo">
+      </div>
+    </aside>
+
+    <section class="questionMain" aria-label="Pregunta 2">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ2" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 1: Direccionalidad estratégica</div>
+        <div class="questionCounter" aria-label="Pregunta 2 de 9">
+          <strong>Pregunta 2 / 9</strong>
+          <div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:22.22%"></div></div>
+        </div>
+      </div>
+
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>2. ¿Por qué cambia?</h3>
+
+          <div class="q1Choices">
+            <label class="q1Choice">
+              <input type="checkbox" name="q2_tipo" value="Problema operativo">
+              <span class="q1Box"></span>
+              <span>Problema operativo</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q2_tipo" value="Oportunidad estratégica">
+              <span class="q1Box"></span>
+              <span>Oportunidad estratégica</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q2_tipo" value="Requerimiento externo">
+              <span class="q1Box"></span>
+              <span>Requerimiento externo</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q2_tipo" value="Mejora cultural">
+              <span class="q1Box"></span>
+              <span>Mejora cultural</span>
+            </label>
+
+            <label class="q1Choice">
+              <input type="checkbox" name="q2_tipo" value="Otro">
+              <span class="q1Box"></span>
+              <span>Otro</span>
+            </label>
+          </div>
+
+          <div class="q1Write">
+            <p class="q1Prompt"><img class="qPromptSpecialIcon" src="assets/q1-q2-hint-icon.png" alt="Guía"> ¿Qué problema concreto resuelve o qué oportunidad habilita?</p>
+            <textarea id="q2Text" class="q1Textarea" disabled placeholder="Describe el problema específico o la oportunidad..."></textarea>
+          </div>
+        </div>
+
+        <div class="q1Bottom">
+          <button class="smallBtn" id="q2Next" type="button">Siguiente</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+<section class="screen" id="screen-pregunta-3" aria-label="Pregunta 3">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide">
+        <img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico">
+      </div>
+      <div class="footer footerSide">
+        <span>Realizado por</span>
+        <img src="assets/distrocuyo.png" alt="Distrocuyo">
+      </div>
+    </aside>
+
+    <section class="questionMain" aria-label="Pregunta 3">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ3" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 1: Direccionalidad estratégica</div>
+        <div class="questionCounter" aria-label="Pregunta 3 de 9">
+          <strong>Pregunta 3 / 9</strong>
+          <div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:33.33%"></div></div>
+        </div>
+      </div>
+
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>3. ¿Para qué cambia?</h3>
+
+          <div class="q3InfoBox">
+            <span class="qInfoCircle" aria-hidden="true">i</span>
+            <div class="q3InfoText">Completa este punto pensando en cómo evoluciona el impacto del cambio a lo largo del tiempo y qué evidencia podríamos ver en cada etapa.</div>
+          </div>
+
+          <div class="q3Blocks">
+            <div class="q3Block">
+              <p class="q3BlockTitle">Corto plazo (0–3 meses): ¿qué beneficios, resultados y/o efectos inmediatos se lograrán?</p>
+              <textarea id="q3Short" class="q3Textarea" placeholder="Ej.: eficiencia operativa inicial, reducción de errores, primeros comportamientos visibles."></textarea>
+            </div>
+
+            <div class="q3Block">
+              <p class="q3BlockTitle">Mediano plazo (3–12 meses): ¿Qué cambios se deberían ver una vez que el proceso/práctica ya está funcionando?</p>
+              <textarea id="q3Medium" class="q3Textarea" placeholder="Ej.: mejoras en indicadores de negocio, adopción generalizada, nuevas formas de trabajo más estables."></textarea>
+            </div>
+
+            <div class="q3Block">
+              <p class="q3BlockTitle">Largo plazo (12+ meses): ¿Qué impacto estratégico o cultural debería consolidarse?</p>
+              <textarea id="q3Long" class="q3Textarea" placeholder="Ej.: evolución cultural, mayor agilidad, prácticas maduras, sostenibilidad en la experiencia del cliente/colaborador."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="q1Bottom">
+          <button class="smallBtn" id="q3Next" type="button">Siguiente</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+
+<section class="screen" id="screen-pregunta-4" aria-label="Pregunta 4">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide"><img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico"></div>
+      <div class="footer footerSide"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+    </aside>
+    <section class="questionMain" aria-label="Pregunta 4">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ4" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 2: Impacto humano</div>
+        <div class="questionCounter" aria-label="Pregunta 4 de 9"><strong>Pregunta 4 / 9</strong><div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:44.44%"></div></div></div>
+      </div>
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>4. ¿A quién impacta?</h3>
+          <div class="qTextOnly">
+            <textarea id="q4Text" placeholder="Describí equipos, áreas, puestos o sectores intervinientes."></textarea>
+          </div>
+        </div>
+        <div class="q1Bottom"><button class="smallBtn" id="q4Next" type="button">Siguiente</button></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="screen" id="screen-pregunta-5" aria-label="Pregunta 5">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide"><img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico"></div>
+      <div class="footer footerSide"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+    </aside>
+    <section class="questionMain" aria-label="Pregunta 5">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ5" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 2: Impacto humano</div>
+        <div class="questionCounter" aria-label="Pregunta 5 de 9"><strong>Pregunta 5 / 9</strong><div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:55.55%"></div></div></div>
+      </div>
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>5. ¿Qué harán distinto?</h3>
+          <div class="q3InfoBox">
+            <span class="qInfoCircle" aria-hidden="true">i</span>
+            <div class="q3InfoText">Esta es una pregunta clave: necesitamos una conducta observable y medible.</div>
+          </div>
+          <div class="qTextOnly">
+            <textarea id="q5Text" placeholder="Describí la conducta observable que marcará que el cambio fue adoptado. Ej.: No usar más el sistema anterior y cargar X antes de las 12 hs."></textarea>
+          </div>
+        </div>
+        <div class="q1Bottom"><button class="smallBtn" id="q5Next" type="button">Siguiente</button></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="screen" id="screen-pregunta-6" aria-label="Pregunta 6">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide"><img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico"></div>
+      <div class="footer footerSide"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+    </aside>
+    <section class="questionMain" aria-label="Pregunta 6">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ6" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 2: Impacto humano</div>
+        <div class="questionCounter" aria-label="Pregunta 6 de 9"><strong>Pregunta 6 / 9</strong><div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:66.66%"></div></div></div>
+      </div>
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>6. Riesgos generales</h3>
+          <div class="q3InfoBox">
+            <span class="qInfoCircle" aria-hidden="true">i</span>
+            <div class="q3InfoText">Esta pregunta es oro. Conecta directamente con el enfoque cultural.</div>
+          </div>
+          <div class="qTextOnly">
+            <textarea id="q6Text" placeholder="¿Qué miedo o resistencia real podría aparecer?"></textarea>
+          </div>
+        </div>
+        <div class="q1Bottom"><button class="smallBtn" id="q6Next" type="button">Siguiente</button></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="screen" id="screen-pregunta-7" aria-label="Pregunta 7">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide"><img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico"></div>
+      <div class="footer footerSide"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+    </aside>
+    <section class="questionMain" aria-label="Pregunta 7">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ7" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 3: Indicadores y medición</div>
+        <div class="questionCounter" aria-label="Pregunta 7 de 9"><strong>Pregunta 7 / 9</strong><div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:77.77%"></div></div></div>
+      </div>
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>7. Narrativa del cambio</h3>
+          <div class="q3InfoBox qHintOrange">
+            <span class="qInfoCircle" aria-hidden="true">i</span>
+            <div class="q3InfoText">Una buena narrativa alinea a las personas, da sentido al proceso y reduce incertidumbre. La clave está en que cuentes la historia de por qué este cambio existe.</div>
+          </div>
+          <div class="qTextOnly">
+            <textarea id="q7Text" placeholder="Qué desafíos, problema o necesidades resuelve y qué oportunidades habilita."></textarea>
+          </div>
+        </div>
+        <div class="q1Bottom"><button class="smallBtn" id="q7Next" type="button">Siguiente</button></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="screen" id="screen-pregunta-8" aria-label="Pregunta 8">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide"><img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico"></div>
+      <div class="footer footerSide"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+    </aside>
+    <section class="questionMain" aria-label="Pregunta 8">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ8" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 3: Indicadores y medición</div>
+        <div class="questionCounter" aria-label="Pregunta 8 de 9"><strong>Pregunta 8 / 9</strong><div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:88.88%"></div></div></div>
+      </div>
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>8. ¿Cómo lo vas a desplegar?</h3>
+          <div class="q3InfoBox qHintOrange">
+            <span class="qInfoCircle" aria-hidden="true">i</span>
+            <div class="q3InfoText">El objetivo es estructurar un plan claro y realista que permita comunicar a cada público el mensaje adecuado, por el canal correcto y en el momento indicado.</div>
+          </div>
+          <div class="qTextOnly">
+            <textarea id="q8Text" placeholder="Describí tu plan: cómo y cuándo se comunicará este cambio a los diversos públicos."></textarea>
+          </div>
+        </div>
+        <div class="q1Bottom"><button class="smallBtn" id="q8Next" type="button">Siguiente</button></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="screen" id="screen-pregunta-9" aria-label="Pregunta 9">
+  <div class="questionLayout">
+    <aside class="questionSide" aria-label="Identidad">
+      <div class="brand brandSide"><img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico"></div>
+      <div class="footer footerSide"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+    </aside>
+    <section class="questionMain" aria-label="Pregunta 9">
+      <div class="questionTop">
+        <button class="smallBtn" id="backFromQ9" type="button">← Volver al mapa</button>
+        <div class="questionBlockTag">BLOQUE 3: Indicadores y medición</div>
+        <div class="questionCounter" aria-label="Pregunta 9 de 9"><strong>Pregunta 9 / 9</strong><div class="miniTrack" aria-hidden="true"><div class="miniFill" style="width:100%"></div></div></div>
+      </div>
+      <div class="questionPanel">
+        <div class="questionPanelInner">
+          <h3>9. Indicadores</h3>
+          <div class="q3InfoBox qHintOrange">
+            <span class="qInfoCircle" aria-hidden="true">i</span>
+            <div class="q3InfoText">Permitirán evaluar si el cambio se implementó correctamente y si las personas lo adoptaron.</div>
+          </div>
+          <div class="qTextOnly qCompact">
+            <p class="qSubLabel">KPI de implementación: ¿Cómo sabremos que el cambio está implementado según lo planificado?</p>
+            <textarea id="q9Impl" placeholder="Ej.: % de procesos actualizados, % de usuarios migrados, Go-Live completado, cumplimiento del plan, sistemas funcionando, materiales entregados."></textarea>
+            <p class="qSubLabel">KPI de adopción: ¿Cómo sabremos que las personas adoptaron y sostienen el cambio?</p>
+            <textarea id="q9Adop" placeholder="Ej.: % de colaboradores que utilizan la herramienta, % de tareas donde se utilizó la solución, mejoras en productividad, reducción de tiempo y errores por proceso."></textarea>
+          </div>
+        </div>
+        <div class="q1Bottom"><button class="smallBtn" id="q9Next" type="button">Finalizar</button></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+
+<section class="screen" id="screen-final">
+  <div class="finalLayout" aria-label="Mapa del cambio completado">
+      <aside class="finalSide">
+        <div class="brand">
+          <img src="assets/gdc-identidad-blanca.png" alt="GdC Norte Estratégico">
+        </div>
+        <div class="footer"><span>Realizado por</span><img src="assets/distrocuyo.png" alt="Distrocuyo"></div>
+      </aside>
+
+      <div class="finalMain">
+        <div class="finalTop finalTopSimple">
+          <button class="smallBtn" type="button" onclick="show('mapa')">← Volver al mapa</button>
+        </div>
+
+        <div class="finalPanel">
+          <div class="finalPanelInner">
+            <div class="finalCheck">✓</div>
+            <h2 class="finalMainTitle">Completaste tu Mapa del Cambio</h2>
+            <p class="finalLead">Ahora tu iniciativa tiene propósito claro, impacto definido y criterios de adopción medibles.</p>
+            <button type="button" class="finalDownloadBtn" id="downloadMapBtn" onclick="window.location.href='review.html'">Descargar tu Mapa del cambio</button>
+
+            <div class="finalNpsWrap" aria-label="Valoración de experiencia">
+              <p class="finalNpsQuestion">¿Cómo fue tu experiencia?</p>
+              <div class="finalNpsOptions" id="finalNpsOptions">
+                <button type="button" class="finalNpsOption" aria-label="Muy buena" title="Muy buena" data-nps-value="10" data-nps-group="9-10" data-nps-label="positiva">
+                  <span class="finalNpsEmoji finalNpsEmoji--good" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="finalNpsOption" aria-label="Dudosa" title="Dudosa" data-nps-value="7" data-nps-group="7-8" data-nps-label="neutral">
+                  <span class="finalNpsEmoji finalNpsEmoji--neutral" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="finalNpsOption" aria-label="Podría mejorar" title="Podría mejorar" data-nps-value="4" data-nps-group="0-6" data-nps-label="negativa">
+                  <span class="finalNpsEmoji finalNpsEmoji--bad" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+
+            <hr class="finalDivider">
+
+            <h3 class="finalSectionTitle">Para asegurar el éxito de la gestión del cambio, deberás considerar:</h3>
+            <ul class="finalList">
+              <li><strong>Alineación estratégica:</strong> el cambio debe responder a una necesidad real del negocio y estar conectado con prioridades organizacionales.</li>
+              <li><strong>Patrocinio activo:</strong> el líder responsable debe sostener, visibilizar y legitimar el cambio en todas las etapas.</li>
+              <li><strong>Narrativa clara y consistente:</strong> mensajes simples, coherentes y repetidos que expliquen qué cambia, para qué y qué se espera de cada persona.</li>
+              <li><strong>Participación temprana de los públicos clave:</strong> involucrar a quienes impacta el cambio desde el inicio, no solo al final.</li>
+              <li><strong>Gestión anticipada de riesgos y resistencias:</strong> identificar temores, barreras y oportunidades para mitigarlas con acciones concretas.</li>
+              <li><strong>Despliegue ordenado en momentos clave:</strong> planificar comunicaciones y acompañamiento en el «antes–durante–después» del cambio.</li>
+              <li><strong>Capacitación y soporte adecuados:</strong> asegurar que las personas tengan habilidades, información y materiales para adoptar el cambio.</li>
+              <li><strong>Indicadores claros:</strong> medir implementación y adopción para ajustar a tiempo.</li>
+              <li><strong>Acompañamiento sostenido:</strong> reforzar, escuchar, ajustar y reconocer avances para consolidar la adopción.</li>
+            </ul>
+
+            <hr class="finalDivider">
+
+            <p class="finalThanks">Gracias por diseñar tu cambio pensando en su adopción.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+
+<div class="npsFeedbackOverlay" id="npsFeedbackOverlay" aria-hidden="true">
+  <div class="npsFeedbackModal" role="dialog" aria-modal="true" aria-labelledby="npsFeedbackTitle">
+    <div class="npsFeedbackBody">
+      <div class="npsFeedbackCheck">✓</div>
+      <h3 class="npsFeedbackTitle" id="npsFeedbackTitle">Valoración registrada</h3>
+      <p class="npsFeedbackText" id="npsFeedbackText">Gracias por elegir una opción. Ahora podés descargar tu Mapa del Cambio.</p>
+    </div>
+    <div class="npsFeedbackActions">
+      <button type="button" class="npsFeedbackGhost" id="npsFeedbackClose">Seguir acá</button>
+      <button type="button" class="npsFeedbackPrimary" id="npsFeedbackDownload">Descargar tu mapa del cambio</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const screens = {
+    login: document.getElementById("screen-login"),
+    mapa: document.getElementById("screen-mapa"),
+    pregunta1: document.getElementById("screen-pregunta-1"),
+    pregunta2: document.getElementById("screen-pregunta-2"),
+    pregunta3: document.getElementById("screen-pregunta-3"),
+    pregunta4: document.getElementById("screen-pregunta-4"),
+    pregunta5: document.getElementById("screen-pregunta-5"),
+    pregunta6: document.getElementById("screen-pregunta-6"),
+    pregunta7: document.getElementById("screen-pregunta-7"),
+    pregunta8: document.getElementById("screen-pregunta-8"),
+    pregunta9: document.getElementById("screen-pregunta-9"),
+    final: document.getElementById("screen-final")
+  };
+
+  const card = document.querySelector('.card');
+  window.show = function show(which){
+    if(which !== 'login'){
+      try { syncQuestionFieldsFromStorage(); } catch(e){}
+    }
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[which].classList.add('active');
+    card.classList.toggle('mapMode', which === 'mapa');
+    card.classList.toggle('questionMode', /^pregunta[1-9]$/.test(which));
+    card.classList.toggle('finalMode', which === 'final');
+    if(which === 'final'){
+      try { window.dispatchEvent(new CustomEvent('gdc:nps-refresh')); } catch(e){}
+    }
+  }
+
+  const form = document.getElementById("newProjectForm");
+  const openForm = document.getElementById("openProjectForm");
+  const startBtn = document.getElementById("startBtn");
+  const nameInput = document.getElementById("name");
+  const emailInput = document.getElementById("email");
+  const projectNameInput = document.getElementById("projectName");
+  const openEmailInput = document.getElementById("openEmail");
+  const newProjectPanel = document.getElementById("newProjectPanel");
+  const openProjectPanel = document.getElementById("openProjectPanel");
+
+  const TITLES = [
+    "¿Qué cambia?",
+    "¿Por qué cambia?",
+    "¿Para qué cambia?",
+    "¿A quién impacta?",
+    "¿Qué harán distinto?",
+    "Riesgos generales",
+    "Narrativa del cambio",
+    "¿Cómo lo vas a desplegar?",
+    "Indicadores"
+  ];
+
+  
+  let mapaBuilt = false;
+  const KEY_DONE = "gdc_map_done_v1"; // array of numbers 1..9
+  const GDC_SUPABASE_URL = 'https://ngqmysactwwhqtbjeyys.supabase.co';
+  const GDC_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ncW15c2FjdHd3aHF0YmpleXlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MjM4NzgsImV4cCI6MjA5MDk5OTg3OH0.uKoBUShuofGL7w6mE28zFL4rMW2QRTB49LiEvs3mpQ8';
+  const GDC_SUPABASE_TABLE = 'gdc_projects';
+  const GDC_PROJECT_ID_KEY = 'gdc_project_id';
+  const GDC_PROJECT_TITLE_KEY = 'gdc_project_title';
+  const GDC_INDEX_PERF_PATCH = true;
+
+  let gdcIndexSupabase = null;
+  function initSupabase(){
+    if (gdcIndexSupabase) return gdcIndexSupabase;
+    try {
+      if(!window.supabase || !window.supabase.createClient) return null;
+      gdcIndexSupabase = window.supabase.createClient(GDC_SUPABASE_URL, GDC_SUPABASE_KEY);
+      return gdcIndexSupabase;
+    }
+    catch(err){ console.error('No se pudo inicializar Supabase en index:', err); return null; }
+  }
+  function normalizeEmail(value){ return String(value || '').trim().toLowerCase(); }
+  function createProjectId(){ return 'gdc-' + Math.random().toString(36).slice(2,8) + '-' + Date.now().toString(36); }
+  function withSupabaseTimeout(promise, ms = 12000, label = 'la operación') {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera agotado al intentar completar ' + label + '.')), ms))
+    ]);
+  }
+  async function supabaseRestSelect({ select='*', filters=[], order=null, limit=null, single=false, timeout=8000, label='la operación' } = {}){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+      const params = new URLSearchParams();
+      params.set('select', select);
+      filters.forEach(([key, value]) => params.set(key, value));
+      if(order) params.set('order', order);
+      if(Number.isFinite(limit)) params.set('limit', String(limit));
+      const url = `${GDC_SUPABASE_URL}/rest/v1/${GDC_SUPABASE_TABLE}?${params.toString()}`;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'apikey': GDC_SUPABASE_KEY,
+          'Authorization': `Bearer ${GDC_SUPABASE_KEY}`,
+          'Accept': 'application/json'
+        },
+        signal: controller.signal
+      });
+      const bodyText = await res.text();
+      let payload = [];
+      try { payload = bodyText ? JSON.parse(bodyText) : []; }
+      catch(parseErr){ throw new Error('La respuesta de Supabase no se pudo interpretar.'); }
+      if(!res.ok){
+        const detalle = payload?.message || payload?.hint || payload?.details || bodyText || ('HTTP ' + res.status);
+        throw new Error(detalle);
+      }
+      if(single){
+        if(Array.isArray(payload)) return payload[0] || null;
+        return payload || null;
+      }
+      return Array.isArray(payload) ? payload : [];
+    } catch(err){
+      if(err?.name === 'AbortError') throw new Error('Tiempo de espera agotado al intentar completar ' + label + '.');
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  function clearProjectState(){
+    ['gdc_q1_checks_v1','gdc_q1_text_v1','gdc_q1_progress','gdc_q2_checks_v1','gdc_q2_text_v1','gdc_q2_progress','gdc_q3_short_v1','gdc_q3_medium_v1','gdc_q3_long_v1','gdc_q4_text_v1','gdc_q5_text_v1','gdc_q6_text_v1','gdc_q7_text_v1','gdc_q8_text_v1','gdc_q9_impl_v1','gdc_q9_adop_v1','gdc_map_done_v1','gdc_nps_value_v1','gdc_nps_label_v1','gdc_nps_group_v1'].forEach((key)=> localStorage.removeItem(key));
+    try { window.dispatchEvent(new CustomEvent('gdc:nps-cleared')); } catch(e){}
+  }
+  function prepareBlankNewProject(){
+    clearProjectState();
+    [GDC_PROJECT_ID_KEY, GDC_PROJECT_TITLE_KEY, 'gdc_user_name', 'gdc_user_email'].forEach((key) => localStorage.removeItem(key));
+    if(form) form.reset();
+    if(nameInput) nameInput.value = '';
+    if(emailInput) emailInput.value = '';
+    if(projectNameInput) projectNameInput.value = '';
+    if(openEmailInput) openEmailInput.value = '';
+    renderOpenProjects([]);
+    setOpenProjectsHint('Ingresá tu correo para buscar proyectos guardados.');
+  }
+  function collectProjectSnapshot(){
+    const ownerName = (localStorage.getItem('gdc_user_name') || '').trim();
+    const ownerEmail = normalizeEmail(localStorage.getItem('gdc_user_email') || '');
+    const projectTitle = (localStorage.getItem(GDC_PROJECT_TITLE_KEY) || '').trim() || 'Proyecto sin título';
+    const answers = {
+      gdc_user_name: ownerName, gdc_user_email: ownerEmail,
+      gdc_q1_checks_v1: localStorage.getItem('gdc_q1_checks_v1') || '[]',
+      gdc_q1_text_v1: localStorage.getItem('gdc_q1_text_v1') || '',
+      gdc_q1_progress: localStorage.getItem('gdc_q1_progress') || '',
+      gdc_q2_checks_v1: localStorage.getItem('gdc_q2_checks_v1') || '[]',
+      gdc_q2_text_v1: localStorage.getItem('gdc_q2_text_v1') || '',
+      gdc_q2_progress: localStorage.getItem('gdc_q2_progress') || '',
+      gdc_q3_short_v1: localStorage.getItem('gdc_q3_short_v1') || '',
+      gdc_q3_medium_v1: localStorage.getItem('gdc_q3_medium_v1') || '',
+      gdc_q3_long_v1: localStorage.getItem('gdc_q3_long_v1') || '',
+      gdc_q4_text_v1: localStorage.getItem('gdc_q4_text_v1') || '',
+      gdc_q5_text_v1: localStorage.getItem('gdc_q5_text_v1') || '',
+      gdc_q6_text_v1: localStorage.getItem('gdc_q6_text_v1') || '',
+      gdc_q7_text_v1: localStorage.getItem('gdc_q7_text_v1') || '',
+      gdc_q8_text_v1: localStorage.getItem('gdc_q8_text_v1') || '',
+      gdc_q9_impl_v1: localStorage.getItem('gdc_q9_impl_v1') || '',
+      gdc_q9_adop_v1: localStorage.getItem('gdc_q9_adop_v1') || '',
+      gdc_map_done_v1: localStorage.getItem('gdc_map_done_v1') || '[]',
+      gdc_nps_value_v1: localStorage.getItem('gdc_nps_value_v1') || '',
+      gdc_nps_label_v1: localStorage.getItem('gdc_nps_label_v1') || '',
+      gdc_nps_group_v1: localStorage.getItem('gdc_nps_group_v1') || ''
+    };
+    const review_answers = {
+      q1_checks: JSON.parse(localStorage.getItem('gdc_q1_checks_v1') || '[]'),
+      q2_checks: JSON.parse(localStorage.getItem('gdc_q2_checks_v1') || '[]'),
+      q1_text: localStorage.getItem('gdc_q1_text_v1') || '',
+      q2_text: localStorage.getItem('gdc_q2_text_v1') || '',
+      q3_short: localStorage.getItem('gdc_q3_short_v1') || '',
+      q3_medium: localStorage.getItem('gdc_q3_medium_v1') || '',
+      q3_long: localStorage.getItem('gdc_q3_long_v1') || '',
+      q4: localStorage.getItem('gdc_q4_text_v1') || '',
+      q5: localStorage.getItem('gdc_q5_text_v1') || '',
+      q6: localStorage.getItem('gdc_q6_text_v1') || '',
+      q7: localStorage.getItem('gdc_q7_text_v1') || '',
+      q8: localStorage.getItem('gdc_q8_text_v1') || '',
+      q9_impl: localStorage.getItem('gdc_q9_impl_v1') || '',
+      q9_adop: localStorage.getItem('gdc_q9_adop_v1') || '',
+      nps_value: localStorage.getItem('gdc_nps_value_v1') || '',
+      nps_label: localStorage.getItem('gdc_nps_label_v1') || '',
+      nps_group: localStorage.getItem('gdc_nps_group_v1') || ''
+    };
+    const doneList = (() => { try { return JSON.parse(localStorage.getItem('gdc_map_done_v1') || '[]'); } catch(e){ return []; } })();
+    const doneCount = Array.isArray(doneList) ? doneList.length : 0;
+    const projectState = {
+      done_questions: doneCount,
+      total_questions: 9,
+      completion_percent: Math.round((doneCount / 9) * 100),
+      is_complete: doneCount === 9,
+      last_completed_question: doneCount ? Math.max(...doneList) : 0,
+      status_label: doneCount === 9 ? 'completo' : (doneCount > 0 ? 'en_progreso' : 'nuevo')
+    };
+    answers.project_state = projectState;
+    review_answers.project_state = projectState;
+    const now = new Date().toISOString();
+    return {
+      project_id: localStorage.getItem(GDC_PROJECT_ID_KEY) || createProjectId(),
+      project_title: projectTitle,
+      owner_name: ownerName,
+      owner_email: ownerEmail,
+      answers,
+      review_answers,
+      updated_at: now
+    };
+  }
+  function applySnapshotToLocal(snapshot){
+    if(!snapshot) return;
+    if(snapshot.project_id) localStorage.setItem(GDC_PROJECT_ID_KEY, snapshot.project_id);
+    if(snapshot.project_title) localStorage.setItem(GDC_PROJECT_TITLE_KEY, snapshot.project_title);
+    if(snapshot.owner_name) localStorage.setItem('gdc_user_name', snapshot.owner_name);
+    if(snapshot.owner_email) localStorage.setItem('gdc_user_email', normalizeEmail(snapshot.owner_email));
+    const answers = snapshot.answers || {};
+    Object.entries(answers).forEach(([key, value]) => localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value)));
+  }
+  function setAccessPanel(which){
+    [newProjectPanel, openProjectPanel].forEach((panel) => panel?.classList.remove('active'));
+    if(which === 'new') newProjectPanel?.classList.add('active');
+    if(which === 'open') openProjectPanel?.classList.add('active');
+  }
+  function setOpenProjectsHint(message, tone='default'){
+    const el = document.getElementById('openProjectsHint'); if(!el) return;
+    el.textContent = message;
+    el.style.color = tone === 'error' ? 'rgba(255,187,187,.92)' : tone === 'success' ? 'rgba(191,243,184,.96)' : 'rgba(234,245,231,.72)';
+  }
+  function renderOpenProjects(projects){
+    const wrap = document.getElementById('openProjectsList'); if(!wrap) return;
+    if(!projects || !projects.length){ wrap.innerHTML = ''; return; }
+    wrap.innerHTML = projects.map((item) => `<article class="accessProjectCard"><div><div class="accessProjectCardTitle">${item.project_title || 'Proyecto sin título'}</div><div class="accessProjectCardMeta">${item.owner_name || item.owner_email || 'Sin nombre'}<br>Actualizado ${item.updated_at ? new Date(item.updated_at).toLocaleString('es-AR', { dateStyle:'short', timeStyle:'short' }) : 'Sin fecha'}</div></div><button type="button" class="smallBtnAlt openProjectSelectBtn" data-project-id="${item.project_id}">Abrir</button></article>`).join('');
+    wrap.querySelectorAll('.openProjectSelectBtn').forEach((btn) => btn.addEventListener('click', async () => { await openExistingProject(btn.dataset.projectId || ''); }));
+  }
+  async function persistProjectSnapshotToCloud(payload, options = {}){
+    const { timeout = 5000, silent = false } = options;
+    const client = initSupabase();
+    if(!client) return { ok:false, skipped:true, error:new Error('Supabase no disponible') };
+    try {
+      const { error } = await withSupabaseTimeout(client.from(GDC_SUPABASE_TABLE).upsert(payload,{ onConflict:'project_id' }), timeout, 'la creación del proyecto');
+      if(error) throw error;
+      return { ok:true };
+    } catch(err){
+      console.error('Error al persistir proyecto:', err);
+      if(!silent){
+        const detalle = err?.message || err?.details || err?.hint || 'Sin detalle disponible';
+        alert(`El proyecto se abrió en local, pero no se pudo guardar en la base de datos.
+
+${detalle}`);
+      }
+      return { ok:false, error:err };
+    }
+  }
+  async function createNewProject(){
+    const name=(nameInput?.value||'').trim(), email=normalizeEmail(emailInput?.value||''), projectTitle=(projectNameInput?.value||'').trim(), okEmail=/^\S+@\S+\.\S+$/.test(email);
+    if(!name){ nameInput?.focus(); return; } if(!okEmail){ emailInput?.focus(); return; } if(!projectTitle){ projectNameInput?.focus(); return; }
+    startBtn.disabled=true; startBtn.textContent='Creando…';
+    clearProjectState();
+    localStorage.setItem('gdc_user_name', name);
+    localStorage.setItem('gdc_user_email', email);
+    localStorage.setItem(GDC_PROJECT_TITLE_KEY, projectTitle);
+    localStorage.setItem(GDC_PROJECT_ID_KEY, createProjectId());
+    localStorage.setItem(KEY_DONE, JSON.stringify([]));
+    const payload = collectProjectSnapshot();
+    try{
+      initMapa();
+      syncQuestionFieldsFromStorage();
+      show('mapa');
+      notifyReviewSync({ persist:false });
+      setTimeout(() => { persistProjectSnapshotToCloud(payload, { timeout: 5000, silent: false }); }, 0);
+    }
+    catch(err){
+      console.error('Error al crear proyecto:', err);
+      const detalle = err?.message || err?.details || err?.hint || 'Sin detalle disponible';
+      alert(`No se pudo crear el proyecto.
+
+${detalle}`);
+    }
+    finally{ startBtn.disabled=false; startBtn.textContent='Comenzar'; }
+  }
+  async function searchProjectsByEmail(){
+    const email=normalizeEmail(openEmailInput?.value||'');
+    const okEmail=/^\S+@\S+\.\S+$/.test(email);
+    if(!okEmail){ openEmailInput?.focus(); return; }
+    const findBtn = document.getElementById('findProjectsBtn');
+    const original = findBtn ? findBtn.textContent : '';
+    if(findBtn){ findBtn.disabled = true; findBtn.textContent = 'Abriendo…'; }
+    setOpenProjectsHint('Abriendo tus proyectos guardados…');
+    renderOpenProjects([]);
+    try {
+      localStorage.setItem('gdc_user_email', email);
+      if(openEmailInput) openEmailInput.value = email;
+      const target = 'review.html?owner_email=' + encodeURIComponent(email) + '&from=index_open';
+      window.location.href = target;
+    } finally {
+      setTimeout(() => {
+        if(findBtn){ findBtn.disabled = false; findBtn.textContent = original || 'Buscar proyectos'; }
+      }, 1500);
+    }
+  }
+
+  async function openExistingProject(projectId){
+    if(!projectId){ setOpenProjectsHint('No se pudo abrir el proyecto.','error'); return; }
+    setOpenProjectsHint('Abriendo proyecto…');
+    try{
+      const data = await supabaseRestSelect({
+        select: '*',
+        filters: [['project_id', `eq.${projectId}`]],
+        limit: 1,
+        single: true,
+        timeout: 8000,
+        label: 'la apertura del proyecto'
+      });
+      if(!data) throw new Error('No encontramos el proyecto solicitado.');
+      clearProjectState();
+      applySnapshotToLocal(data);
+      if(nameInput) nameInput.value=localStorage.getItem('gdc_user_name')||'';
+      if(emailInput) emailInput.value=localStorage.getItem('gdc_user_email')||'';
+      if(projectNameInput) projectNameInput.value=localStorage.getItem(GDC_PROJECT_TITLE_KEY)||'';
+      if(openEmailInput) openEmailInput.value=localStorage.getItem('gdc_user_email')||'';
+      initMapa();
+      syncQuestionFieldsFromStorage();
+      show('mapa');
+      notifyReviewSync({ persist:false });
+    }
+    catch(err){ console.error('Error al abrir proyecto:', err); const detalle = err?.message || err?.details || 'Sin detalle'; setOpenProjectsHint('No se pudo abrir el proyecto seleccionado. ' + detalle,'error'); }
+  }
+
+
+  function getDone(){
+    try { return JSON.parse(localStorage.getItem(KEY_DONE) || "[]"); }
+    catch(e){ return []; }
+  }
+  function setDone(arr){
+    localStorage.setItem(KEY_DONE, JSON.stringify(arr));
+  }
+
+  function paintProgress(){
+    const done = getDone();
+    const pct = Math.round((done.length/9)*100);
+    const txt = document.getElementById("gamiText");
+    const fill = document.getElementById("gamiFill");
+    if(txt) txt.textContent = `${done.length}/9`;
+    if(fill) fill.style.width = pct + "%";
+
+    const dots = Array.from(document.querySelectorAll("#gamiDots span"));
+    dots.forEach((d, i) => d.classList.toggle("on", done.includes(i+1)));
+  }
+
+  function syncDone(index, complete){
+    const done = getDone();
+    const has = done.includes(index);
+    if(complete && !has) done.push(index);
+    if(!complete && has) done.splice(done.indexOf(index),1);
+    setDone(done);
+    paintProgress();
+  }
+  window.syncDone = syncDone;
+
+  const gdcSyncChannel = (() => { try { return new BroadcastChannel('gdc_sync_channel_v2'); } catch (e) { return null; } })();
+  let gdcCloudPersistTimer = null;
+  let gdcCloudPersistInFlight = false;
+  async function persistProjectSnapshotToCloud(options = {}){
+    const { silent = true } = options;
+    const client = initSupabase();
+    if(!client) return;
+    const projectId = (localStorage.getItem(GDC_PROJECT_ID_KEY) || '').trim();
+    if(!projectId || gdcCloudPersistInFlight) return;
+    gdcCloudPersistInFlight = true;
+    try {
+      const payload = collectProjectSnapshot();
+      const { error } = await withSupabaseTimeout(client.from(GDC_SUPABASE_TABLE).upsert(payload,{ onConflict:'project_id' }), 12000, 'el guardado automático');
+      if(error) throw error;
+    } catch(err){
+      console.error('No se pudo persistir el proyecto en Supabase desde mapa:', err);
+      if(!silent){
+        const detalle = err?.message || err?.details || err?.hint || 'Sin detalle disponible';
+        alert(`No se pudo guardar el proyecto en la base de datos.
+
+${detalle}`);
+      }
+    } finally {
+      gdcCloudPersistInFlight = false;
+    }
+  }
+  function scheduleProjectPersist(options = {}){
+    const delay = Number.isFinite(options.delay) ? options.delay : 1200;
+    const immediate = !!options.immediate;
+    const silent = options.silent !== false;
+    if(gdcCloudPersistTimer){ clearTimeout(gdcCloudPersistTimer); gdcCloudPersistTimer = null; }
+    if(immediate){ persistProjectSnapshotToCloud({ silent }); return; }
+    gdcCloudPersistTimer = setTimeout(() => persistProjectSnapshotToCloud({ silent }), delay);
+  }
+  function notifyReviewSync(options = {}){
+    const payload = { type:'gdc_review_sync_v2', at: Date.now() };
+    const shouldPersist = options.persist !== false;
+    try { if (gdcSyncChannel) gdcSyncChannel.postMessage(payload); } catch(e){}
+    if(shouldPersist) scheduleProjectPersist({ delay: 2500, silent: true });
+  }
+  function recomputeMapDoneAndUI(){
+    const done = [];
+    const q1ChecksCurrent = Array.from(document.querySelectorAll('input[name="q1_tipo"]:checked'));
+    const q2ChecksCurrent = Array.from(document.querySelectorAll('input[name="q2_tipo"]:checked'));
+    const q1Value = (document.getElementById('q1Text')?.value || '').trim();
+    const q2Value = (document.getElementById('q2Text')?.value || '').trim();
+    const q3a = (document.getElementById('q3Short')?.value || '').trim();
+    const q3b = (document.getElementById('q3Medium')?.value || '').trim();
+    const q3c = (document.getElementById('q3Long')?.value || '').trim();
+    const q4v = (document.getElementById('q4Text')?.value || '').trim();
+    const q5v = (document.getElementById('q5Text')?.value || '').trim();
+    const q6v = (document.getElementById('q6Text')?.value || '').trim();
+    const q7v = (document.getElementById('q7Text')?.value || '').trim();
+    const q8v = (document.getElementById('q8Text')?.value || '').trim();
+    const q9a = (document.getElementById('q9Impl')?.value || '').trim();
+    const q9b = (document.getElementById('q9Adop')?.value || '').trim();
+    if(q1ChecksCurrent.length && q1Value) done.push(1);
+    if(q2ChecksCurrent.length && q2Value) done.push(2);
+    if(q3a && q3b && q3c) done.push(3);
+    if(q4v) done.push(4);
+    if(q5v) done.push(5);
+    if(q6v) done.push(6);
+    if(q7v) done.push(7);
+    if(q8v) done.push(8);
+    if(q9a && q9b) done.push(9);
+    setDone(done);
+    paintProgress();
+    try { updateChoiceSelectedUI(); } catch(e){}
+    try {
+      document.querySelectorAll('input[name="q1_tipo"]').forEach((el) => {
+        const lbl = el.closest('.q1Choice');
+        if(lbl) lbl.classList.toggle('selected', !!el.checked);
+      });
+      document.querySelectorAll('input[name="q2_tipo"]').forEach((el) => {
+        const lbl = el.closest('.q1Choice');
+        if(lbl) lbl.classList.toggle('selected', !!el.checked);
+      });
+    } catch(e){}
+  }
+  function syncQuestionFieldsFromStorage(){
+    const hello = document.getElementById("hello");
+    const storedName = localStorage.getItem("gdc_user_name") || "";
+    const storedEmail = localStorage.getItem("gdc_user_email") || "";
+    if(hello && storedName) hello.textContent = `Hola ${storedName}`;
+    if(nameInput && document.activeElement !== nameInput && storedName) nameInput.value = storedName;
+    if(emailInput && document.activeElement !== emailInput && storedEmail) emailInput.value = storedEmail;
+
+    const q1Checks = (() => { try { return JSON.parse(localStorage.getItem("gdc_q1_checks_v1") || "[]"); } catch(e){ return []; } })();
+    document.querySelectorAll('input[name="q1_tipo"]').forEach(el => { el.checked = q1Checks.includes(el.value); });
+    const q1TextField = document.getElementById("q1Text");
+    if(q1TextField && document.activeElement !== q1TextField){
+      q1TextField.value = localStorage.getItem("gdc_q1_text_v1") || "";
+      q1TextField.disabled = q1Checks.length === 0;
+    }
+
+    const q2Checks = (() => { try { return JSON.parse(localStorage.getItem("gdc_q2_checks_v1") || "[]"); } catch(e){ return []; } })();
+    document.querySelectorAll('input[name="q2_tipo"]').forEach(el => { el.checked = q2Checks.includes(el.value); });
+    const q2TextField = document.getElementById("q2Text");
+    if(q2TextField && document.activeElement !== q2TextField){
+      q2TextField.value = localStorage.getItem("gdc_q2_text_v1") || "";
+      q2TextField.disabled = q2Checks.length === 0;
+    }
+
+    const fieldMap = { q3Short:"gdc_q3_short_v1", q3Medium:"gdc_q3_medium_v1", q3Long:"gdc_q3_long_v1", q4Text:"gdc_q4_text_v1", q5Text:"gdc_q5_text_v1", q6Text:"gdc_q6_text_v1", q7Text:"gdc_q7_text_v1", q8Text:"gdc_q8_text_v1", q9Impl:"gdc_q9_impl_v1", q9Adop:"gdc_q9_adop_v1" };
+    Object.entries(fieldMap).forEach(([id,key]) => {
+      const el = document.getElementById(id);
+      if(el && document.activeElement !== el) el.value = localStorage.getItem(key) || "";
+    });
+
+    try { updateChoiceSelectedUI(); } catch(e){}
+    document.querySelectorAll('input[name="q1_tipo"]').forEach((el) => {
+      const lbl = el.closest('.q1Choice');
+      if(lbl) lbl.classList.toggle('selected', !!el.checked);
+    });
+    document.querySelectorAll('input[name="q2_tipo"]').forEach((el) => {
+      const lbl = el.closest('.q1Choice');
+      if(lbl) lbl.classList.toggle('selected', !!el.checked);
+    });
+
+    paintProgress();
+  }
+  let gdcSyncPaintTimer = null;
+  function handleExternalSync(){
+    if(gdcSyncPaintTimer) clearTimeout(gdcSyncPaintTimer);
+    gdcSyncPaintTimer = setTimeout(() => {
+      syncQuestionFieldsFromStorage();
+      try { if (typeof window.restoreQ1FromStorage === "function") window.restoreQ1FromStorage(); } catch(e){}
+      try { if (typeof window.loadQ2FromStorage === "function") window.loadQ2FromStorage(); } catch(e){}
+      recomputeMapDoneAndUI();
+    }, 120);
+  }
+  window.addEventListener("storage", (event) => { if(!event.key || String(event.key).startsWith("gdc_")) handleExternalSync(); });
+  window.addEventListener("focus", handleExternalSync);
+  document.addEventListener("visibilitychange", () => { if(!document.hidden) handleExternalSync(); });
+  if(gdcSyncChannel){ gdcSyncChannel.addEventListener("message", (event) => { if(event && event.data && event.data.type === "gdc_review_sync_v2") handleExternalSync(); }); }
+
+  function initMapa(){
+    if(mapaBuilt) return;
+    mapaBuilt = true;
+
+    const grid = document.getElementById("mapGrid");
+    grid.innerHTML = "";
+
+    const blocks = [
+      { title: "Bloque 1: Direccionalidad estratégica", cls: "block-1", items: [0,1,2] },
+      { title: "Bloque 2: Impacto humano", cls: "block-2", items: [3,4,5] },
+      { title: "Bloque 3: Indicadores y medición", cls: "block-3", items: [6,7,8] }
+    ];
+
+    // Dots
+    const dotsWrap = document.getElementById("gamiDots");
+    dotsWrap.innerHTML = "";
+    for(let i=0;i<9;i++){
+      const s = document.createElement("span");
+      dotsWrap.appendChild(s);
+    }
+
+    blocks.forEach((block, blockIndex) => {
+      const wrap = document.createElement("section");
+      wrap.className = `mapBlock ${block.cls}`;
+
+      const title = document.createElement("h4");
+      title.className = "blockTitle";
+      title.textContent = block.title;
+
+      const blockGrid = document.createElement("div");
+      blockGrid.className = "blockGrid";
+
+      block.items.forEach((titleIndex, innerIndex) => {
+        const t = TITLES[titleIndex];
+        const n = titleIndex + 1;
+        const nn = String(n).padStart(2,"0");
+
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.style.textAlign = "left";
+        tile.style.animation = "screenIn .35s ease both";
+        tile.style.animationDelay = ((blockIndex*3 + innerIndex)*0.03) + "s";
+        tile.setAttribute("role","button");
+        tile.setAttribute("tabindex","0");
+        tile.innerHTML = `<span class="ring" aria-hidden="true"></span><div class="num">${nn}</div><h4>${t}</h4>`;
+
+        const click = () => {
+          show("pregunta" + n);
+          tile.animate([
+            { transform:"translateY(-4px) scale(1.015)" },
+            { transform:"translateY(0) scale(1)" }
+          ], { duration: 240, easing:"ease-out" });
+        };
+
+        tile.addEventListener("click", click);
+        tile.addEventListener("keydown", (e) => {
+          if(e.key === "Enter" || e.key === " "){ e.preventDefault(); click(); }
+        });
+
+        blockGrid.appendChild(tile);
+      });
+
+      wrap.appendChild(title);
+      wrap.appendChild(blockGrid);
+      grid.appendChild(wrap);
+    });
+
+    const hello = document.getElementById("hello");
+    const name = localStorage.getItem("gdc_user_name");
+    if(hello && name) hello.textContent = `Hola ${name}`;
+
+    paintProgress();
+  }
+
+  document.getElementById('showNewProjectBtn')?.addEventListener('click', () => { prepareBlankNewProject(); setAccessPanel('new'); nameInput?.focus(); });
+  document.getElementById('showOpenProjectBtn')?.addEventListener('click', () => setAccessPanel('open'));
+  document.getElementById('showBackendBtn')?.addEventListener('click', () => { window.location.href = 'admin-login.html'; });
+  document.getElementById('cancelAccessBtn')?.addEventListener('click', () => setAccessPanel(''));
+  document.getElementById('cancelOpenAccessBtn')?.addEventListener('click', () => setAccessPanel(''));
+  form?.addEventListener('submit', (e) => { e.preventDefault(); createNewProject(); });
+  startBtn?.addEventListener('click', (e) => { e.preventDefault(); createNewProject(); });
+  openForm?.addEventListener('submit', (e) => { e.preventDefault(); searchProjectsByEmail(); });
+
+  nameInput?.addEventListener('input', () => {
+    localStorage.setItem('gdc_user_name', (nameInput.value || '').trim());
+  });
+  emailInput?.addEventListener('input', () => {
+    localStorage.setItem('gdc_user_email', normalizeEmail(emailInput.value || ''));
+  });
+  projectNameInput?.addEventListener('input', () => {
+    localStorage.setItem(GDC_PROJECT_TITLE_KEY, (projectNameInput.value || '').trim());
+  });
+  openEmailInput?.addEventListener('input', () => {
+    localStorage.setItem('gdc_user_email', normalizeEmail(openEmailInput.value || ''));
+  });
+
+  document.getElementById("backBtn").addEventListener("click", () => show("login"));
+
+  function goToMapaIfReady(){
+    initMapa();
+    syncQuestionFieldsFromStorage();
+    show("mapa");
+  }
+
+  window.addEventListener('message', (event) => {
+    if(event && event.data && event.data.type === 'gdc_go_to_map_v1'){
+      goToMapaIfReady();
+    }
+  });
+
+  if(window.location.hash === '#mapa' && localStorage.getItem('gdc_user_name') && localStorage.getItem('gdc_user_email')){
+    goToMapaIfReady();
+  }
+
+  // Prefill solo del buscador para facilitar reabrir por correo.
+  const existingEmail = localStorage.getItem("gdc_user_email");
+  if(existingEmail && openEmailInput) openEmailInput.value = existingEmail;
+
+  const q1Checks = Array.from(document.querySelectorAll('input[name="q1_tipo"]'));
+  const q1Text = document.getElementById("q1Text");
+  const q1StoredChecks = "gdc_q1_checks_v1";
+  const q1StoredText = "gdc_q1_text_v1";
+
+  function syncQ1State(){
+    const hasChecked = q1Checks.some(ch => ch.checked);
+    q1Text.disabled = !hasChecked;
+  }
+
+  function saveQ1(){
+    const checks = q1Checks.filter(ch => ch.checked).map(ch => ch.value);
+    localStorage.setItem(q1StoredChecks, JSON.stringify(checks));
+    localStorage.setItem(q1StoredText, q1Text.value || "");
+    const done = getDone();
+    const isComplete = checks.length > 0 && (q1Text.value || "").trim().length > 0;
+    const has1 = done.includes(1);
+    if(isComplete && !has1) done.push(1);
+    if(!isComplete && has1){
+      const idx = done.indexOf(1);
+      done.splice(idx,1);
+    }
+    setDone(done);
+    paintProgress();
+    notifyReviewSync();
+  }
+
+  function restoreQ1(){
+    let checks = [];
+    try{ checks = JSON.parse(localStorage.getItem(q1StoredChecks) || "[]"); }catch(e){}
+    q1Checks.forEach(ch => ch.checked = checks.includes(ch.value));
+    q1Text.value = localStorage.getItem(q1StoredText) || "";
+    syncQ1State();
+    saveQ1();
+    notifyReviewSync();
+  }
+  window.restoreQ1FromStorage = restoreQ1;
+
+  q1Checks.forEach(ch => ch.addEventListener("change", () => { syncQ1State(); saveQ1(); }));
+  q1Text.addEventListener("input", saveQ1);
+
+  function goBackToMap(){
+    try { closeQ1Feedback(); } catch(e){}
+    try { closeQ2Modal(); } catch(e){}
+    try { closeQ3Modal(); } catch(e){}
+    try { closeAdvance(); } catch(e){}
+    try { closeBlock(); } catch(e){}
+    handleExternalSync();
+    show("mapa");
+  }
+  document.getElementById("backFromQ1").addEventListener("click", (e) => { e.preventDefault(); goBackToMap(); });
+  document.getElementById("q1Next").addEventListener("click", () => {
+    saveQ1();
+    openQ1Feedback();
+  });
+
+  restoreQ1();
+
+</script>
+<script>
+document.addEventListener("click", (e)=>{
+  const tile = e.target.closest(".tile");
+  if(!tile) return;
+  const num = tile.querySelector(".num")?.textContent.trim();
+  if(false && num==="01") openModal();
+});
+</script>
+
+<!-- Modal Punto 1 -->
+<div class="modalOverlay" id="modalOverlay" aria-hidden="true">
+  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modalHeader">
+      <h3 id="modalTitle">1. ¿Qué cambia?</h3>
+      <button class="modalClose" id="modalClose" aria-label="Cerrar">✕</button>
+    </div>
+
+    <div class="modalHUD" aria-label="Progreso del mapeo">
+      <div class="hudLeft">
+        <div class="hudBadge">Punto <strong>1</strong> / 9</div>
+        <div class="hudText">Seleccioná un tipo de cambio</div>
+      </div>
+      <div class="hudRight">
+        <div class="hudPill" id="hudPill" aria-live="polite">Sin completar</div>
+      </div>
+    </div>
+
+    <div class="modalBody" id="modalBody">
+      <div class="scrollHint" id="scrollHint" aria-hidden="true">Deslizá para ver más</div>
+      <div class="modalSection">
+        <div class="modalLabel">Tipo de cambio</div>
+        <div class="choices" role="radiogroup" aria-label="Tipo de cambio">
+          <label class="choice"><input type="radio" name="tipoCambio" value="Proceso"> Proceso</label>
+          <label class="choice"><input type="radio" name="tipoCambio" value="Sistema"> Sistema / herramienta</label>
+          <label class="choice"><input type="radio" name="tipoCambio" value="Rol"> Rol / estructura</label>
+          <label class="choice"><input type="radio" name="tipoCambio" value="Cultural"> Práctica cultural</label>
+          <label class="choice"><input type="radio" name="tipoCambio" value="Otro" id="otroRadio"> Otro</label>
+        </div></div>
+<div class="modalSection abiertaWrap" id="abiertaWrap">
+        <div class="modalLabel">✍ Abierta clave</div>
+        <div class="modalHint">Describí el cambio en una frase clara y comprensible para cualquier persona de la compañía.</div>
+        <textarea id="descripcionCambio" placeholder="Describí el cambio en una frase clara y comprensible para cualquier persona de la compañía."></textarea>
+      </div>
+      <div class="modalFooter">
+        <button class="modalSave" id="modalSave" type="button">Guardar</button>
+      </div>
+      <div style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// === MODAL LOGIC (Punto 1) ===
+const modal = document.getElementById("modalOverlay");
+const modalClose = document.getElementById("modalClose");
+const modalSave = document.getElementById("modalSave");
+const otroRadio = document.getElementById("otroRadio");
+const abiertaWrap = document.getElementById("abiertaWrap");
+const descripcionCambio = document.getElementById("descripcionCambio");
+
+const modalBody = document.getElementById("modalBody");
+const hudPill = document.getElementById("hudPill");
+const scrollHint = document.getElementById("scrollHint");
+
+function setHud(text, ok=false){
+  if(!hudPill) return;
+  hudPill.textContent = text;
+  hudPill.classList.toggle("ok", !!ok);
+}
+function updateChoiceSelectedUI(){
+  document.querySelectorAll(".choice").forEach(lbl=>{
+    const inp = lbl.querySelector("input");
+    lbl.classList.toggle("selected", !!inp?.checked);
+  });
+}
+function maybeShowScrollHint(){
+  if(!modalBody || !scrollHint) return;
+  const needs = modalBody.scrollHeight > modalBody.clientHeight + 6;
+  scrollHint.classList.toggle("show", needs);
+}
+
+
+function resetModalUI(){
+  // hide conditional parts
+  abiertaWrap.classList.remove("show");
+  if(descripcionCambio) descripcionCambio.value = "";
+  // keep radios as-is (optional). If you want: clear selection:
+  // document.querySelectorAll('input[name="tipoCambio"]').forEach(r=>r.checked=false);
+}
+
+function openModal(){
+  modal.classList.add("active");
+  document.body.classList.add("modalOpen");
+  updateChoiceSelectedUI();
+  if(otroRadio.checked){
+    abiertaWrap.classList.add("show");
+    setTimeout(()=>descripcionCambio?.focus(), 80);
+    setHud("Completar texto", false);
+  }else{
+    abiertaWrap.classList.remove("show");
+    setHud("Elegí una opción", false);
+  }
+  setTimeout(maybeShowScrollHint, 120);
+}
+
+function closeModal(){
+  modal.classList.remove("active");
+  document.body.classList.remove("modalOpen");
+}
+
+modalClose.addEventListener("click", closeModal);
+modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
+modalBody?.addEventListener('scroll', ()=>{
+  if(!scrollHint) return;
+  scrollHint.classList.toggle('show', modalBody.scrollTop < 6 && (modalBody.scrollHeight > modalBody.clientHeight + 6));
+});
+
+// Toggle conditional UI on selection
+document.querySelectorAll('input[name="tipoCambio"]').forEach(r=>{
+  r.addEventListener("change", ()=>{
+    updateChoiceSelectedUI();
+    if(r.value === "Otro"){
+      abiertaWrap.classList.add("show");
+      setHud("Completá la frase", false);
+      setTimeout(()=>{
+        descripcionCambio?.focus();
+        // bring the writing area into view smoothly
+        abiertaWrap.scrollIntoView({behavior:'smooth', block:'start'});
+        maybeShowScrollHint();
+      }, 120);
+    }else{
+      abiertaWrap.classList.remove("show");
+      if(descripcionCambio) descripcionCambio.value = "";
+      setHud(`Listo: ${r.closest('label')?.innerText?.trim() || r.value}`, true);
+      setTimeout(maybeShowScrollHint, 120);
+    }
+  });
+});
+
+modalSave.addEventListener("click", ()=>{
+  const selectedInput = document.querySelector('input[name="tipoCambio"]:checked');
+  const selected = selectedInput?.value;
+
+  // Soft validation
+  if(!selected){
+    setHud("Elegí una opción", false);
+    return;
+  }
+  if(selected === "Otro"){
+    const val = (descripcionCambio?.value || "").trim();
+    if(!val){
+      setHud("Te falta escribir la frase", false);
+      const card = document.querySelector('.modalCard');
+      card?.animate([
+        {transform:'translateX(0)'},
+        {transform:'translateX(-6px)'},
+        {transform:'translateX(6px)'},
+        {transform:'translateX(0)'}
+      ], {duration:260, easing:'ease-in-out'});
+      descripcionCambio?.focus();
+      return;
+    }
+  }
+
+  // Mark "saved" (only on save)
+  document.querySelectorAll(".choice").forEach(c=>c.classList.remove("saved"));
+  const lbl = selectedInput?.closest("label");
+  if(lbl) lbl.classList.add("saved");
+
+  setHud("Guardado ✓", true);
+  setTimeout(closeModal, 180);
+});
+
+// Hook tile 01 directly (avoid global click side-effects)
+function bindTile01(){
+  const grid = document.getElementById("mapGrid");
+  if(!grid) return;
+  const tiles = Array.from(grid.querySelectorAll(".tile"));
+  const t01 = tiles.find(t => (t.querySelector(".num")?.textContent.trim() === "01"));
+  if(!t01) return;
+
+  // Remove prior handlers that may exist in this build
+  t01.addEventListener("click", (e)=>{
+    // let the tile gamification click still happen; open modal after a tiny delay
+    setTimeout(()=>{}, 60);
+  });
+}
+document.addEventListener("DOMContentLoaded", ()=>{
+  // map is built on demand; patch initMapa to call bindTile01 after build
+  const originalInit = window.initMapa;
+  if(typeof originalInit === "function"){
+    window.initMapa = function(){
+      const r = originalInit.apply(this, arguments);
+      bindTile01();
+      return r;
+    }
+  }
+});
+</script>
+
+
+<div class="q1FeedbackOverlay" id="q1FeedbackOverlay" aria-hidden="true">
+  <div class="q1FeedbackModal" role="dialog" aria-modal="true" aria-labelledby="q1FeedbackTitle">
+    <div class="q1FeedbackBody">
+      <div class="q1FeedbackBadge" id="q1FeedbackBadge">✦ Buen avance</div>
+      <h3 class="q1FeedbackTitle" id="q1FeedbackTitle">Excelente</h3>
+      <p class="q1FeedbackText" id="q1FeedbackText">Ya completaste esta primera parte del mapa. Podés seguir con la próxima pregunta o guardar tu avance para retomarlo después.</p>
+    </div>
+    <div class="q1FeedbackActions">
+      <button type="button" class="q1FeedbackGhost" id="q1SaveAdvance">Guardar avance</button>
+      <button type="button" class="q1FeedbackPrimary" id="q1ContinueBtn">Continuar</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  const overlay = document.getElementById("q1FeedbackOverlay");
+  const continueBtn = document.getElementById("q1ContinueBtn");
+  const saveBtn = document.getElementById("q1SaveAdvance");
+  const title = document.getElementById("q1FeedbackTitle");
+  const text = document.getElementById("q1FeedbackText");
+  const badge = document.getElementById("q1FeedbackBadge");
+  let q1IncompleteMode = false;
+  const q1Text = document.getElementById("q1Text");
+  const q1Checks = Array.from(document.querySelectorAll('input[name="q1_tipo"]'));
+  const nextBtn = document.getElementById("q1Next");
+
+  if(!overlay || !continueBtn || !saveBtn || !title || !text || !nextBtn) return;
+
+  const DEFAULT_TITLE = "Excelente";
+  const DEFAULT_TEXT = "Ya completaste esta primera parte del mapa. Podés seguir con la próxima pregunta o guardar tu avance para retomarlo después.";
+
+  function q1Complete(){
+    const checked = q1Checks.some(i => i.checked);
+    const hasText = q1Text && q1Text.value.trim().length > 0;
+    return checked && hasText;
+  }
+
+  function resetQ1Feedback(){
+    q1IncompleteMode = false;
+    title.textContent = DEFAULT_TITLE;
+    text.textContent = DEFAULT_TEXT;
+    if(badge) badge.style.display = "";
+    saveBtn.style.display = "";
+    continueBtn.textContent = "Continuar";
+  }
+
+  window.openQ1Feedback = function(){
+    resetQ1Feedback();
+    if(!q1Complete()){
+      q1IncompleteMode = true;
+      title.textContent = "Antes de seguir";
+      text.textContent = "Marcá una o más opciones y describí el motivo del cambio para poder avanzar. Podés guardar lo ya trabajado y retomarlo después.";
+      if(badge) badge.style.display = "none";
+      saveBtn.style.display = "none";
+      continueBtn.textContent = "Guardar avance";
+    }
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden", "false");
+  };
+
+  function closeQ1Feedback(){
+    overlay.classList.remove("active");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+
+  continueBtn.addEventListener("click", async () => {
+    if(q1IncompleteMode){
+      try{ saveQ1(); await persistProjectSnapshotToCloud({ silent:false }); }catch(e){}
+      closeQ1Feedback();
+      if (typeof goBackToMap === "function") goBackToMap(); else if (typeof show === "function") show("mapa");
+      return;
+    }
+    closeQ1Feedback();
+    if (typeof show === "function") show("pregunta2");
+  });
+
+  saveBtn.addEventListener("click", async () => {
+    try{
+      const payload = {
+        tipos: q1Checks.filter(i => i.checked).map(i => i.value),
+        descripcion: q1Text ? q1Text.value : ""
+      };
+      localStorage.setItem("gdc_q1_progress", JSON.stringify(payload));
+      saveQ1();
+      await persistProjectSnapshotToCloud({ silent:false });
+    }catch(err){}
+    title.textContent = "Avance guardado";
+    text.textContent = "Tu avance quedó guardado en la base de datos para continuar después.";
+    if(badge) badge.style.display = "none";
+    saveBtn.style.display = "none";
+    continueBtn.textContent = "Cerrar";
+  });
+
+  overlay.addEventListener("click", (e) => {
+    if(e.target === overlay) closeQ1Feedback();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape" && overlay.classList.contains("active")){
+      closeQ1Feedback();
+    }
+  });
+
+  /* Respaldo: intercepta click si otro script intenta llevar al mapa */
+  nextBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    openQ1Feedback();
+  }, true);
+})();
+</script>
+
+
+<div class="q1FeedbackOverlay" id="q2FeedbackOverlay" aria-hidden="true">
+  <div class="q1FeedbackModal" role="dialog" aria-modal="true" aria-labelledby="q2FeedbackTitle">
+    <div class="q1FeedbackBody">
+      <div class="q1FeedbackBadge" id="q2FeedbackBadge">✦ Buen avance</div>
+      <h3 class="q1FeedbackTitle" id="q2FeedbackTitle">Excelente</h3>
+      <p class="q1FeedbackText" id="q2FeedbackText">Ya completaste esta segunda parte del mapa. Podés seguir con la próxima pregunta o guardar tu avance para retomarlo después.</p>
+    </div>
+    <div class="q1FeedbackActions">
+      <button type="button" class="q1FeedbackGhost" id="q2SaveAdvance">Guardar avance</button>
+      <button type="button" class="q1FeedbackPrimary" id="q2ContinueBtn">Continuar</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  const q2Checks = Array.from(document.querySelectorAll('input[name="q2_tipo"]'));
+  const q2Text = document.getElementById("q2Text");
+  const q2Next = document.getElementById("q2Next");
+  const backFromQ2 = document.getElementById("backFromQ2");
+
+  const q2StoredChecks = "gdc_q2_checks_v1";
+  const q2StoredText = "gdc_q2_text_v1";
+
+  const q2Overlay = document.getElementById("q2FeedbackOverlay");
+  const q2ContinueBtn = document.getElementById("q2ContinueBtn");
+  const q2SaveAdvance = document.getElementById("q2SaveAdvance");
+  const q2FeedbackTitle = document.getElementById("q2FeedbackTitle");
+  const q2FeedbackText = document.getElementById("q2FeedbackText");
+  const q2FeedbackBadge = document.getElementById("q2FeedbackBadge");
+  let q2IncompleteMode = false;
+
+  function syncQ2State(){
+    const hasChecked = q2Checks.some(ch => ch.checked);
+    if(q2Text) q2Text.disabled = !hasChecked;
+  }
+
+  function saveQ2(){
+    const checks = q2Checks.filter(ch => ch.checked).map(ch => ch.value);
+    try{
+      localStorage.setItem(q2StoredChecks, JSON.stringify(checks));
+      localStorage.setItem(q2StoredText, q2Text ? q2Text.value : "");
+    }catch(e){}
+    syncDone(2, checks.length > 0 && q2Text && q2Text.value.trim().length > 0);
+    notifyReviewSync();
+  }
+
+  function loadQ2(){
+    try{
+      const checks = JSON.parse(localStorage.getItem(q2StoredChecks) || "[]");
+      q2Checks.forEach(ch => ch.checked = checks.includes(ch.value));
+    }catch(e){}
+    if(q2Text) q2Text.value = localStorage.getItem(q2StoredText) || "";
+    syncQ2State();
+    syncDone(2, q2Checks.some(ch => ch.checked) && q2Text && q2Text.value.trim().length > 0);
+    notifyReviewSync();
+  }
+  window.loadQ2FromStorage = loadQ2;
+
+  function q2Complete(){
+    const hasChecked = q2Checks.some(ch => ch.checked);
+    const hasText = q2Text && q2Text.value.trim().length > 0;
+    return hasChecked && hasText;
+  }
+
+  function resetQ2Modal(){
+    q2IncompleteMode = false;
+    if(q2FeedbackTitle) q2FeedbackTitle.textContent = "Excelente";
+    if(q2FeedbackText) q2FeedbackText.textContent = "Ya completaste esta segunda parte del mapa. Podés seguir con la próxima pregunta o guardar tu avance para retomarlo después.";
+    if(q2FeedbackBadge) q2FeedbackBadge.style.display = "";
+    if(q2SaveAdvance) q2SaveAdvance.style.display = "";
+    if(q2ContinueBtn) q2ContinueBtn.textContent = "Continuar";
+  }
+
+  function openQ2Modal(){
+    if(!q2Overlay) return;
+    resetQ2Modal();
+    if(!q2Complete()){
+      q2IncompleteMode = true;
+      if(q2FeedbackTitle) q2FeedbackTitle.textContent = "Antes de seguir";
+      if(q2FeedbackText) q2FeedbackText.textContent = "Marcá una o más opciones y describí el motivo del cambio para poder avanzar. Podés guardar lo ya trabajado y retomarlo después.";
+      if(q2FeedbackBadge) q2FeedbackBadge.style.display = "none";
+      if(q2SaveAdvance) q2SaveAdvance.style.display = "none";
+      if(q2ContinueBtn) q2ContinueBtn.textContent = "Guardar avance";
+    }
+    q2Overlay.classList.add("active");
+    q2Overlay.setAttribute("aria-hidden", "false");
+  }
+
+  function closeQ2Modal(){
+    if(!q2Overlay) return;
+    q2Overlay.classList.remove("active");
+    q2Overlay.setAttribute("aria-hidden", "true");
+  }
+
+  q2Checks.forEach(ch => ch.addEventListener("change", () => {
+    syncQ2State();
+    try { updateChoiceSelectedUI(); } catch(e){}
+    saveQ2();
+  }));
+  if(q2Text){
+    q2Text.addEventListener("input", saveQ2);
+  }
+
+  if(backFromQ2){
+    backFromQ2.addEventListener("click", function(e){
+      e.preventDefault();
+      if (typeof goBackToMap === "function") goBackToMap(); else if (typeof show === "function") show("mapa");
+    });
+  }
+
+  if(q2Next){
+    q2Next.addEventListener("click", function(e){
+      e.preventDefault();
+      saveQ2();
+      openQ2Modal();
+    });
+    q2Next.addEventListener("click", function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      saveQ2();
+      openQ2Modal();
+    }, true);
+  }
+
+  if(q2ContinueBtn){
+    q2ContinueBtn.addEventListener("click", function(){
+      if(!q2Complete()) return;
+      closeQ2Modal();
+      if (typeof show === "function") show("pregunta3");
+    });
+  }
+
+  if(q2SaveAdvance){
+    q2SaveAdvance.addEventListener("click", async function(){
+      saveQ2();
+      try{ await persistProjectSnapshotToCloud({ silent:false }); }catch(e){}
+      if(q2FeedbackTitle) q2FeedbackTitle.textContent = "Avance guardado";
+      if(q2FeedbackText) q2FeedbackText.textContent = "Tu avance quedó guardado en la base de datos para continuar después.";
+      if(q2FeedbackBadge) q2FeedbackBadge.style.display = "none";
+      if(q2SaveAdvance) q2SaveAdvance.style.display = "none";
+      if(q2ContinueBtn) q2ContinueBtn.textContent = "Cerrar";
+    });
+  }
+
+  if(q2Overlay){
+    q2Overlay.addEventListener("click", function(e){
+      if(e.target === q2Overlay) closeQ2Modal();
+    });
+  }
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && q2Overlay && q2Overlay.classList.contains("active")){
+      closeQ2Modal();
+    }
+  });
+
+  loadQ2();
+})();
+</script>
+
+
+
+<div class="q1FeedbackOverlay" id="q3FeedbackOverlay" aria-hidden="true">
+  <div class="q1FeedbackModal q3FeedbackModal q3Success" role="dialog" aria-modal="true" aria-labelledby="q3FeedbackTitle">
+    <div class="q3FeedbackModalHead">
+      <img src="assets/gdc-identidad-blanca.png" alt="GdC">
+    </div>
+    <div class="q1FeedbackBody q3SuccessBody">
+      <div class="q3SuccessCheck" id="q3FeedbackBadge">✓</div>
+      <h3 class="q1FeedbackTitle q3SuccessTitle" id="q3FeedbackTitle">Bloque 1 completado</h3>
+      <p class="q1FeedbackText q3SuccessText" id="q3FeedbackText">El cambio tiene sentido y dirección clara. Ahora analicemos el impacto humano.</p>
+    </div>
+    <div class="q1FeedbackActions q3SuccessActions">
+      <button type="button" class="q1FeedbackGhost" id="q3SaveAdvance">Guardar avance</button>
+      <button type="button" class="q1FeedbackPrimary" id="q3ContinueBtn">Continuar</button>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+(function(){
+  const backFromQ3 = document.getElementById("backFromQ3");
+  const q3Next = document.getElementById("q3Next");
+  const q3Short = document.getElementById("q3Short");
+  const q3Medium = document.getElementById("q3Medium");
+  const q3Long = document.getElementById("q3Long");
+
+  const q3Overlay = document.getElementById("q3FeedbackOverlay");
+  const q3ContinueBtn = document.getElementById("q3ContinueBtn");
+  const q3SaveAdvance = document.getElementById("q3SaveAdvance");
+  const q3FeedbackTitle = document.getElementById("q3FeedbackTitle");
+  const q3FeedbackText = document.getElementById("q3FeedbackText");
+  const q3FeedbackBadge = document.getElementById("q3FeedbackBadge");
+  let q3IncompleteMode = false;
+
+  const KEY_Q3_SHORT = "gdc_q3_short_v1";
+  const KEY_Q3_MEDIUM = "gdc_q3_medium_v1";
+  const KEY_Q3_LONG = "gdc_q3_long_v1";
+
+  function saveQ3(){
+    try{
+      localStorage.setItem(KEY_Q3_SHORT, q3Short ? q3Short.value : "");
+      localStorage.setItem(KEY_Q3_MEDIUM, q3Medium ? q3Medium.value : "");
+      localStorage.setItem(KEY_Q3_LONG, q3Long ? q3Long.value : "");
+      const done = getDone();
+      const complete = q3Complete();
+      const has3 = done.includes(3);
+      if(complete && !has3) done.push(3);
+      if(!complete && has3){
+        const idx = done.indexOf(3);
+        done.splice(idx,1);
+      }
+      setDone(done);
+      paintProgress();
+    }catch(err){}
+  }
+
+  function loadQ3(){
+    if(q3Short) q3Short.value = localStorage.getItem(KEY_Q3_SHORT) || "";
+    if(q3Medium) q3Medium.value = localStorage.getItem(KEY_Q3_MEDIUM) || "";
+    if(q3Long) q3Long.value = localStorage.getItem(KEY_Q3_LONG) || "";
+    saveQ3();
+  }
+
+  function q3Complete(){
+    const a = q3Short && q3Short.value.trim().length > 0;
+    const b = q3Medium && q3Medium.value.trim().length > 0;
+    const c = q3Long && q3Long.value.trim().length > 0;
+    return a && b && c;
+  }
+
+  function resetQ3Modal(){
+    q3IncompleteMode = false;
+    if(q3FeedbackTitle) q3FeedbackTitle.textContent = "Bloque 1 completado";
+    if(q3FeedbackText) q3FeedbackText.textContent = "El cambio tiene sentido y dirección clara. Ahora analicemos el impacto humano.";
+    if(q3FeedbackBadge) q3FeedbackBadge.style.display = "";
+    if(q3SaveAdvance) q3SaveAdvance.style.display = "";
+    if(q3ContinueBtn) q3ContinueBtn.textContent = "Continuar";
+  }
+
+  function openQ3Modal(){
+    if(!q3Overlay) return;
+    resetQ3Modal();
+    if(!q3Complete()){
+      q3IncompleteMode = true;
+      if(q3FeedbackTitle) q3FeedbackTitle.textContent = "Antes de seguir";
+      if(q3FeedbackText) q3FeedbackText.textContent = "Completá los campos que puedas y guardá el avance para retomarlo después.";
+      if(q3FeedbackBadge) q3FeedbackBadge.style.display = "none";
+      if(q3SaveAdvance) q3SaveAdvance.style.display = "none";
+      if(q3ContinueBtn) q3ContinueBtn.textContent = "Guardar avance";
+    }
+    q3Overlay.classList.add("active");
+    q3Overlay.setAttribute("aria-hidden", "false");
+  }
+
+  function closeQ3Modal(){
+    if(!q3Overlay) return;
+    q3Overlay.classList.remove("active");
+    q3Overlay.setAttribute("aria-hidden", "true");
+  }
+
+  [q3Short, q3Medium, q3Long].forEach(el => {
+    if(el) el.addEventListener("input", saveQ3);
+  });
+
+  if(backFromQ3){
+    backFromQ3.addEventListener("click", function(e){
+      e.preventDefault();
+      if (typeof goBackToMap === "function") goBackToMap(); else if (typeof show === "function") show("mapa");
+    });
+  }
+
+  if(q3Next){
+    q3Next.addEventListener("click", function(e){
+      e.preventDefault();
+      saveQ3();
+      openQ3Modal();
+    });
+  }
+
+  if(q3ContinueBtn){
+    q3ContinueBtn.addEventListener("click", async function(){
+      if(q3IncompleteMode){
+        try{ saveQ3(); await persistProjectSnapshotToCloud({ silent:false }); }catch(e){}
+        closeQ3Modal();
+        if (typeof goBackToMap === "function") goBackToMap(); else if (typeof show === "function") show("mapa");
+        return;
+      }
+      closeQ3Modal();
+      if (typeof show === "function") show("pregunta4");
+    });
+  }
+
+  if(q3SaveAdvance){
+    q3SaveAdvance.addEventListener("click", async function(){
+      saveQ3();
+      try{ await persistProjectSnapshotToCloud({ silent:false }); }catch(e){}
+      if(q3FeedbackTitle) q3FeedbackTitle.textContent = "Avance guardado";
+      if(q3FeedbackText) q3FeedbackText.textContent = "Tu avance quedó guardado en la base de datos para continuar después.";
+      if(q3FeedbackBadge) q3FeedbackBadge.style.display = "none";
+      if(q3SaveAdvance) q3SaveAdvance.style.display = "none";
+      if(q3ContinueBtn) q3ContinueBtn.textContent = "Cerrar";
+    });
+  }
+
+  if(q3Overlay){
+    q3Overlay.addEventListener("click", function(e){
+      if(e.target === q3Overlay) closeQ3Modal();
+    });
+  }
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && q3Overlay && q3Overlay.classList.contains("active")){
+      closeQ3Modal();
+    }
+  });
+
+  loadQ3();
+})();
+</script>
+
+
+<div class="q1FeedbackOverlay" id="genericAdvanceOverlay" aria-hidden="true">
+  <div class="q1FeedbackModal" role="dialog" aria-modal="true" aria-labelledby="genericAdvanceTitle">
+    <div class="q1FeedbackBody">
+      <div class="q1FeedbackBadge" id="genericAdvanceBadge">✦ Buen avance</div>
+      <h3 class="q1FeedbackTitle" id="genericAdvanceTitle">Excelente</h3>
+      <p class="q1FeedbackText" id="genericAdvanceText">Ya completaste esta parte del mapa. Podés seguir con la próxima pregunta o guardar tu avance para retomarlo después.</p>
+    </div>
+    <div class="q1FeedbackActions">
+      <button type="button" class="q1FeedbackGhost" id="genericAdvanceSave">Guardar avance</button>
+      <button type="button" class="q1FeedbackPrimary" id="genericAdvanceContinue">Continuar</button>
+    </div>
+  </div>
+</div>
+
+<div class="q1FeedbackOverlay" id="genericBlockOverlay" aria-hidden="true">
+  <div class="q1FeedbackModal q3FeedbackModal q3Success" role="dialog" aria-modal="true" aria-labelledby="genericBlockTitle">
+    <div class="q3FeedbackModalHead"><img src="assets/gdc-identidad-blanca.png" alt="GdC"></div>
+    <div class="q1FeedbackBody q3SuccessBody">
+      <div class="q3SuccessCheck">✓</div>
+      <h3 class="q1FeedbackTitle q3SuccessTitle" id="genericBlockTitle">Bloque completado</h3>
+      <p class="q1FeedbackText q3SuccessText" id="genericBlockText">Completaste este bloque del mapa.</p>
+    </div>
+    <div class="q1FeedbackActions q3SuccessActions">
+      <button type="button" class="q1FeedbackGhost" id="genericBlockSave">Guardar avance</button>
+      <button type="button" class="q1FeedbackPrimary" id="genericBlockContinue">Continuar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const advanceOverlay = document.getElementById('genericAdvanceOverlay');
+  const advanceTitle = document.getElementById('genericAdvanceTitle');
+  const advanceText = document.getElementById('genericAdvanceText');
+  const advanceSave = document.getElementById('genericAdvanceSave');
+  const advanceContinue = document.getElementById('genericAdvanceContinue');
+  const advanceBadge = document.getElementById('genericAdvanceBadge');
+
+  const blockOverlay = document.getElementById('genericBlockOverlay');
+  const blockTitle = document.getElementById('genericBlockTitle');
+  const blockText = document.getElementById('genericBlockText');
+  const blockSave = document.getElementById('genericBlockSave');
+  const blockContinue = document.getElementById('genericBlockContinue');
+
+  let advanceNext = null;
+  let blockNext = null;
+  let advanceSaveFn = null;
+  let blockSaveFn = null;
+  let advanceIncompleteMode = false;
+
+  function openAdvance(opts){
+    advanceIncompleteMode = !!opts.incomplete;
+    advanceTitle.textContent = opts.title || 'Excelente';
+    advanceText.textContent = opts.text || 'Ya completaste esta parte del mapa. Podés seguir con la próxima pregunta o guardar tu avance para retomarlo después.';
+    if(advanceBadge) advanceBadge.style.display = advanceIncompleteMode ? 'none' : '';
+    advanceSave.style.display = advanceIncompleteMode ? 'none' : '';
+    advanceContinue.textContent = advanceIncompleteMode ? 'Guardar avance' : 'Continuar';
+    advanceNext = opts.onContinue || null;
+    advanceSaveFn = opts.onSave || null;
+    advanceOverlay.classList.add('active');
+    advanceOverlay.setAttribute('aria-hidden', 'false');
+  }
+  function closeAdvance(){ advanceOverlay.classList.remove('active'); advanceOverlay.setAttribute('aria-hidden','true'); }
+
+  function openBlock(opts){
+    blockTitle.textContent = opts.title || 'Bloque completado';
+    blockText.textContent = opts.text || 'Completaste este bloque del mapa.';
+    blockSave.style.display = '';
+    blockContinue.textContent = 'Continuar';
+    blockNext = opts.onContinue || null;
+    blockSaveFn = opts.onSave || null;
+    blockOverlay.classList.add('active');
+    blockOverlay.setAttribute('aria-hidden', 'false');
+  }
+  function closeBlock(){ blockOverlay.classList.remove('active'); blockOverlay.setAttribute('aria-hidden','true'); }
+
+  advanceContinue.addEventListener('click', async ()=>{ if(advanceIncompleteMode){ if(typeof advanceSaveFn === 'function') advanceSaveFn(); try{ await persistProjectSnapshotToCloud({ silent:false }); }catch(e){} closeAdvance(); if (typeof goBackToMap === 'function') goBackToMap(); else if (typeof show === 'function') show('mapa'); return; } closeAdvance(); if(typeof advanceNext === 'function') advanceNext(); });
+  advanceSave.addEventListener('click', async ()=>{
+    if(typeof advanceSaveFn === 'function') advanceSaveFn();
+    try{ await persistProjectSnapshotToCloud({ silent:false }); }catch(e){}
+    advanceTitle.textContent = 'Avance guardado';
+    advanceText.textContent = 'Tu avance quedó guardado en la base de datos para continuar después.';
+    if(advanceBadge) advanceBadge.style.display = 'none';
+    advanceSave.style.display = 'none';
+    advanceContinue.textContent = 'Cerrar';
+  });
+  blockContinue.addEventListener('click', ()=>{ closeBlock(); if(typeof blockNext === 'function') blockNext(); });
+  blockSave.addEventListener('click', ()=>{
+    if(typeof blockSaveFn === 'function') blockSaveFn();
+    blockTitle.textContent = 'Avance guardado';
+    blockText.textContent = 'Tu respuesta quedó guardada en este navegador para continuar después.';
+    blockSave.style.display = 'none';
+    blockContinue.textContent = 'Cerrar';
+  });
+
+  [advanceOverlay, blockOverlay].forEach(overlay => overlay.addEventListener('click', (e)=>{ if(e.target === overlay) overlay.classList.remove('active'); }));
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      if(advanceOverlay.classList.contains('active')) closeAdvance();
+      if(blockOverlay.classList.contains('active')) closeBlock();
+    }
+  });
+
+  function syncDone(index, complete){
+    const done = getDone();
+    const has = done.includes(index);
+    if(complete && !has) done.push(index);
+    if(!complete && has) done.splice(done.indexOf(index),1);
+    setDone(done);
+    paintProgress();
+  }
+
+  function bindSimpleQuestion(cfg){
+    const field = document.getElementById(cfg.fieldId);
+    const next = document.getElementById(cfg.nextId);
+    const back = document.getElementById(cfg.backId);
+    const key = cfg.storageKey;
+    function save(){
+      const value = field ? field.value : '';
+      localStorage.setItem(key, value);
+      syncDone(cfg.index, value.trim().length > 0);
+      notifyReviewSync();
+    }
+    function load(){
+      if(field) field.value = localStorage.getItem(key) || '';
+      save();
+    }
+    if(field) field.addEventListener('input', save);
+    if(back) back.addEventListener('click', (e)=>{ e.preventDefault(); if (typeof goBackToMap === 'function') goBackToMap(); else show('mapa'); });
+    if(next) next.addEventListener('click', (e)=>{
+      e.preventDefault();
+      save();
+      if(!(field && field.value.trim().length > 0)){
+        openAdvance({
+          title:'Antes de seguir',
+          text: (cfg.validationText || 'Completá el campo para poder avanzar.') + ' Podés guardar lo ya trabajado y retomarlo después.',
+          onContinue: null,
+          onSave: save,
+          incomplete: true
+        });
+        return;
+      }
+      openAdvance({ onContinue: ()=> show(cfg.nextScreen), onSave: save });
+    });
+    load();
+    return {save};
+  }
+
+  const q4 = bindSimpleQuestion({ index:4, fieldId:'q4Text', nextId:'q4Next', backId:'backFromQ4', storageKey:'gdc_q4_text_v1', nextScreen:'pregunta5', validationText:'Describí a quién impacta el cambio para poder avanzar.' });
+  const q5 = bindSimpleQuestion({ index:5, fieldId:'q5Text', nextId:'q5Next', backId:'backFromQ5', storageKey:'gdc_q5_text_v1', nextScreen:'pregunta6', validationText:'Describí la conducta observable para poder avanzar.' });
+  const q7 = bindSimpleQuestion({ index:7, fieldId:'q7Text', nextId:'q7Next', backId:'backFromQ7', storageKey:'gdc_q7_text_v1', nextScreen:'pregunta8', validationText:'Describí la narrativa del cambio para poder avanzar.' });
+  const q8 = bindSimpleQuestion({ index:8, fieldId:'q8Text', nextId:'q8Next', backId:'backFromQ8', storageKey:'gdc_q8_text_v1', nextScreen:'pregunta9', validationText:'Describí el despliegue del cambio para poder avanzar.' });
+
+  // Q6 cierre bloque 2
+  const q6Field = document.getElementById('q6Text');
+  function saveQ6(){
+    localStorage.setItem('gdc_q6_text_v1', q6Field ? q6Field.value : '');
+    syncDone(6, q6Field && q6Field.value.trim().length > 0);
+    notifyReviewSync();
+  }
+  if(q6Field){ q6Field.value = localStorage.getItem('gdc_q6_text_v1') || ''; q6Field.addEventListener('input', saveQ6); saveQ6(); }
+  document.getElementById('backFromQ6')?.addEventListener('click', (e)=>{ e.preventDefault(); if (typeof goBackToMap === 'function') goBackToMap(); else show('mapa'); });
+  document.getElementById('q6Next')?.addEventListener('click', (e)=>{
+    e.preventDefault(); saveQ6();
+    if(!(q6Field && q6Field.value.trim().length > 0)){
+      openAdvance({ title:'Antes de seguir', text:'Completá el campo de riesgos generales para poder avanzar. Podés guardar lo ya trabajado y retomarlo después.', onSave: saveQ6, incomplete: true });
+      return;
+    }
+    openBlock({ title:'Bloque 2 completado', text:'Entendés el impacto humano y riesgos principales. Ahora definamos los indicadores.', onContinue: ()=> show('pregunta7'), onSave: saveQ6 });
+  });
+
+  // Q9 cierre bloque 3
+  const q9Impl = document.getElementById('q9Impl');
+  const q9Adop = document.getElementById('q9Adop');
+  function saveQ9(){
+    localStorage.setItem('gdc_q9_impl_v1', q9Impl ? q9Impl.value : '');
+    localStorage.setItem('gdc_q9_adop_v1', q9Adop ? q9Adop.value : '');
+    syncDone(9, q9Impl && q9Impl.value.trim().length > 0 && q9Adop && q9Adop.value.trim().length > 0);
+    notifyReviewSync();
+  }
+  if(q9Impl) q9Impl.value = localStorage.getItem('gdc_q9_impl_v1') || '';
+  if(q9Adop) q9Adop.value = localStorage.getItem('gdc_q9_adop_v1') || '';
+  [q9Impl, q9Adop].forEach(el => el && el.addEventListener('input', saveQ9));
+  saveQ9();
+  document.getElementById('backFromQ9')?.addEventListener('click', (e)=>{ e.preventDefault(); if (typeof goBackToMap === 'function') goBackToMap(); else show('mapa'); });
+  document.getElementById('q9Next')?.addEventListener('click', (e)=>{
+    e.preventDefault(); saveQ9();
+    if(!(q9Impl && q9Impl.value.trim().length > 0 && q9Adop && q9Adop.value.trim().length > 0)){
+      openAdvance({ title:'Antes de seguir', text:'Completá ambos indicadores para poder finalizar. Podés guardar lo ya trabajado y retomarlo después.', onSave: saveQ9, incomplete: true });
+      return;
+    }
+    openBlock({ title:'Bloque 3 completado', text:'Tenés un plan de despliegue y medición definido.', onContinue: ()=> show('final'), onSave: saveQ9 });
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  const STORAGE_VALUE = 'gdc_nps_value_v1';
+  const STORAGE_LABEL = 'gdc_nps_label_v1';
+  const STORAGE_GROUP = 'gdc_nps_group_v1';
+  const options = Array.from(document.querySelectorAll('.finalNpsOption'));
+  const overlay = document.getElementById('npsFeedbackOverlay');
+  const closeBtn = document.getElementById('npsFeedbackClose');
+  const downloadBtn = document.getElementById('npsFeedbackDownload');
+  const message = document.getElementById('npsFeedbackText');
+  if(!options.length || !overlay || !closeBtn || !downloadBtn || !message) return;
+
+  function normalizeStoredValue(raw){
+    const value = String(raw || '').trim();
+    return options.some((btn) => String(btn.dataset.npsValue || '').trim() === value) ? value : '';
+  }
+  function clearStoredNps(){
+    localStorage.removeItem(STORAGE_VALUE);
+    localStorage.removeItem(STORAGE_LABEL);
+    localStorage.removeItem(STORAGE_GROUP);
+  }
+  function applySelected(value){
+    const normalized = normalizeStoredValue(value);
+    options.forEach((btn) => btn.classList.toggle('is-selected', String(btn.dataset.npsValue || '') === normalized));
+  }
+  function syncSelectionFromStorage(){
+    const storedValue = normalizeStoredValue(localStorage.getItem(STORAGE_VALUE) || '');
+    if(!storedValue) clearStoredNps();
+    applySelected(storedValue);
+    return storedValue;
+  }
+  function openModal(text){
+    message.textContent = text || 'Gracias por elegir una opción. Ahora podés descargar tu Mapa del Cambio.';
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+  }
+  async function persistNpsSelection(){
+    try{
+      if(typeof notifyReviewSync === 'function') notifyReviewSync({ persist:false });
+      if(typeof persistProjectSnapshotToCloud === 'function'){
+        await persistProjectSnapshotToCloud({ silent:false });
+        return;
+      }
+      if(typeof scheduleProjectPersist === 'function'){
+        scheduleProjectPersist({ immediate:true, silent:false });
+      }
+    }catch(e){
+      console.error('No se pudo guardar el NPS al instante:', e);
+    }
+  }
+  async function selectNps(btn){
+    const value = normalizeStoredValue(btn.dataset.npsValue || '');
+    const label = String(btn.dataset.npsLabel || '').trim();
+    const group = String(btn.dataset.npsGroup || '').trim();
+    if(!value) return;
+    localStorage.setItem(STORAGE_VALUE, value);
+    localStorage.setItem(STORAGE_LABEL, label);
+    localStorage.setItem(STORAGE_GROUP, group);
+    applySelected(value);
+    await persistNpsSelection();
+    const copy = label === 'positiva'
+      ? 'Gracias por tu valoración positiva. Ahora podés descargar tu Mapa del Cambio.'
+      : label === 'neutral'
+        ? 'Gracias por tu devolución. Ahora podés descargar tu Mapa del Cambio.'
+        : 'Gracias por tu devolución. Ahora podés descargar tu Mapa del Cambio y seguir mejorando la experiencia.';
+    openModal(copy);
+  }
+  options.forEach((btn) => btn.addEventListener('click', async () => { await selectNps(btn); }));
+  closeBtn.addEventListener('click', closeModal);
+  downloadBtn.addEventListener('click', () => { window.location.href = 'review.html'; });
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && overlay.classList.contains('active')) closeModal(); });
+  window.addEventListener('gdc:nps-refresh', syncSelectionFromStorage);
+  window.addEventListener('gdc:nps-cleared', () => { clearStoredNps(); applySelected(''); closeModal(); });
+  window.addEventListener('storage', (e) => {
+    if(!e.key || e.key === STORAGE_VALUE || e.key === STORAGE_LABEL || e.key === STORAGE_GROUP) syncSelectionFromStorage();
+  });
+  syncSelectionFromStorage();
+})();
+</script>
+
+</body>
+</html>
